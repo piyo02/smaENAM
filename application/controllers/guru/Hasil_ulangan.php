@@ -1,0 +1,119 @@
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+class Hasil_ulangan extends Users_Controller
+{
+    private $services = null;
+    private $name = null;
+    private $parent_page = 'guru';
+    private $current_page = 'guru/hasil_ulangan/';
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->library('services/Hasil_ulangan_services');
+        $this->load->library('services/Excel_services');
+        $this->services = new Hasil_ulangan_services;
+        $this->excel = new Excel_services;
+        $this->load->model(array(
+            'm_bank_soal',
+            'm_mapel',
+            'm_ulangan',
+            'm_hasil_ulangan',
+        ));
+    }
+
+    public function index()
+    {
+        #################################################################3
+        $data = '';
+        $table = $this->services->groups_table_config($this->current_page, $data);
+        $table["rows"] = $this->m_ulangan->get_ulangan($this->session->userdata('user_id'))->result();
+        $table = $this->load->view('templates/tables/plain_table_12', $table, true);
+        $this->data["contents"] = $table;
+
+        #################################################################3
+        $alert = $this->session->flashdata('alert');
+        $this->data["key"] = $this->input->get('key', FALSE);
+        $this->data["alert"] = (isset($alert)) ? $alert : NULL;
+        $this->data["current_page"] = $this->current_page;
+        $this->data["block_header"] = "Hasil Ulangan";
+        $this->data["header"] = "Daftar Hasil Ulangan";
+        $this->data["sub_header"] = 'Klik Tombol Action Untuk Aksi Lebih Lanjut';
+        $this->render("templates/contents/plain_content");
+    }
+
+    public function detail($id)
+    {
+        #################################################################3
+        $table = $this->services->tabel_hasil_ulangan($this->current_page);
+        $table["rows"] = $this->m_hasil_ulangan->get_hasil_ulangan($id)->result();
+        $table = $this->load->view('templates/tables/plain_table_12', $table, true);
+        $this->data["contents"] = $table;
+
+        $add_menu = array(
+            "name" => "Export <i class='fas fa-file-excel'></i>",
+            "button_color" => "primary",
+            "url" => site_url($this->current_page . "export_excel/" . $id),
+            'param' => null
+        );
+
+        $add_menu = $this->load->view('templates/actions/link', $add_menu, true);
+        $this->data["header_button"] =  $add_menu;
+        #################################################################3
+        $alert = $this->session->flashdata('alert');
+        $this->data["key"] = $this->input->get('key', FALSE);
+        $this->data["alert"] = (isset($alert)) ? $alert : NULL;
+        $this->data["current_page"] = $this->current_page;
+        $this->data["block_header"] = "Hasil Ulangan";
+        $this->data["header"] = "Daftar Hasil Ulangan";
+        $this->data["sub_header"] = 'Klik Tombol Action Untuk Aksi Lebih Lanjut';
+        $this->render("templates/contents/plain_content");
+    }
+
+    public function delete()
+    {
+        if (!($_POST)) redirect(site_url($this->current_page));
+
+        $data_param['ulangan_id']     = $this->input->post('id');
+        if ($this->m_hasil_ulangan->delete($data_param)) {
+            $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_hasil_ulangan->messages()));
+        } else {
+            $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_hasil_ulangan->errors()));
+        }
+        redirect(site_url($this->current_page));
+    }
+
+    public function delete_hasil()
+    {
+        if (!($_POST)) redirect(site_url($this->current_page));
+
+        $data_param['id'] = $this->input->post('id');
+        $ulangan_id       = $this->input->post('ulangan_id');
+        if ($this->m_hasil_ulangan->delete($data_param)) {
+            $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_hasil_ulangan->messages()));
+        } else {
+            $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_hasil_ulangan->errors()));
+        }
+        redirect(site_url($this->current_page . 'detail/' . $ulangan_id));
+    }
+
+    public function export_excel($id)
+    {
+        $mapsub = $this->m_bank_soal->get_list_mapel_subbab($id);
+        $detail = $this->m_ulangan->get_task_by_id($id)->row();
+        $detail->nama_sekolah = 'SMA NEGERI 6 KENDARI';
+        foreach ($mapsub as $key => $value) {
+            $detail->mapel = $value->mapel_name;
+            $detail->subbab = $value->subbab_name;
+        }
+        $_data = [
+            'rows' => $this->m_hasil_ulangan->get_hasil_ulangan($id)->result(),
+            'headers' => $this->services->header_excel($this->m_hasil_ulangan->get_hasil_ulangan($id)->num_rows()),
+            'title' => 'Hasil Ulangan',
+            'detail' => $detail,
+        ];
+        #################################################################
+        $this->excel->excel_config($_data);
+        redirect('teacher/my_class');
+    }
+}
