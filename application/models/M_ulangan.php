@@ -89,7 +89,6 @@ class M_ulangan extends MY_Model
     $this->db->select('tabel_ulangan.id');
     $this->db->select('tabel_ulangan.nama');
     $this->db->select('tabel_ulangan.waktu_mulai');
-    $this->db->select('tabel_ulangan.waktu_selesai');
     $this->db->select('tabel_ulangan.durasi');
     $this->db->select('tabel_ulangan.kkm');
     $this->db->select('tabel_ulangan.nilai_maks');

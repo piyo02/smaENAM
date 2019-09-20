@@ -130,4 +130,3 @@ class M_group extends MY_Model
   }
 
 }
-?>

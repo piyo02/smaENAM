@@ -32,7 +32,7 @@ class Soal_services
 	public function groups_table_config($_page, $start_number = 1)
 	{
 		$table["header"] = array(
-			'id' => 'Kode',
+			'kode' => 'Kode',
 			'text' => 'Soal',
 			'type' => 'Tipe Soal',
 			'jawaban' => 'Jawaban',
@@ -71,7 +71,7 @@ class Soal_services
 					),
 				),
 				"title" => "User",
-				"data_name" => "id",
+				"data_name" => "kode",
 			),
 		);
 		return $table;

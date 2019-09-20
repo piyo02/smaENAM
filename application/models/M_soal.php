@@ -82,6 +82,7 @@ class M_soal extends MY_Model
   public function get_soal($bank_soal_id, $limit, $start)
   {
     $this->db->select($this->table . '.id');
+    $this->db->select($this->table . '.kode');
     $this->db->select($this->table . '.bank_soal_id');
     $this->db->select($this->table . '.type AS type_soal');
     $this->db->select('tabel_jawaban.type AS type');
@@ -104,6 +105,7 @@ class M_soal extends MY_Model
   public function get_soal_by_id($data_param)
   {
     $this->db->select($this->table . '.id');
+    $this->db->select($this->table . '.id');
     $this->db->select($this->table . '.bank_soal_id');
     $this->db->select($this->table . '.type');
     $this->db->select($this->table . '.text');
@@ -125,15 +127,26 @@ class M_soal extends MY_Model
 
   public function get_number($data_param)
   {
-    $this->db->select_max('id');
-    $this->db->where('bank_soal_id', $data_param);
+    $this->db->select('kode');
+    $this->db->where('id = (SELECT MAX(id) FROM tabel_soal WHERE bank_soal_id = ' . $data_param . ')');
     return $this->db->get('tabel_soal');
   }
 
 
   public function insert_soal($data)
   {
-    return $this->db->insert('tabel_soal', $data);
+    // Filter the data passed
+    $data = $this->_filter_data($this->table, $data);
+
+    $this->db->insert($this->table, $data);
+    $id = $this->db->insert_id($this->table . '_id_seq');
+
+    if (isset($id)) {
+      $this->set_message("berhasil");
+      return $id;
+    }
+    $this->set_error("gagal");
+    return FALSE;
   }
 
   public function insert_option($data)

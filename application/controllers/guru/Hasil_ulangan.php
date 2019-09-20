@@ -26,8 +26,9 @@ class Hasil_ulangan extends Users_Controller
     {
         #################################################################3
         $data = '';
+        $data_param['creator_id'] = $this->session->userdata('user_id');
         $table = $this->services->groups_table_config($this->current_page, $data);
-        $table["rows"] = $this->m_ulangan->get_ulangan($this->session->userdata('user_id'))->result();
+        $table["rows"] = $this->m_ulangan->get_ulangan($data_param)->result();
         $table = $this->load->view('templates/tables/plain_table_12', $table, true);
         $this->data["contents"] = $table;
 
@@ -115,5 +116,25 @@ class Hasil_ulangan extends Users_Controller
         #################################################################
         $this->excel->excel_config($_data);
         redirect('teacher/my_class');
+    }
+
+
+    public function review($id)
+    {
+        #################################################################3
+        // $table = $this->services->tabel_hasil_ulangan($this->current_page);
+        // $table["rows"] = $this->m_hasil_ulangan->get_hasil_ulangan($id)->result();
+        // $table = $this->load->view('templates/tables/plain_table_12', $table, true);
+        // $this->data["contents"] = $table;
+
+        #################################################################3
+        $alert = $this->session->flashdata('alert');
+        $this->data["key"] = $this->input->get('key', FALSE);
+        $this->data["alert"] = (isset($alert)) ? $alert : NULL;
+        $this->data["current_page"] = $this->current_page;
+        $this->data["block_header"] = "Review Ulangan";
+        $this->data["header"] = "Siswa ";
+        $this->data["sub_header"] = 'Klik Tombol Action Untuk Aksi Lebih Lanjut';
+        $this->render("templates/review/content");
     }
 }

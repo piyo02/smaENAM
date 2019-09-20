@@ -122,7 +122,7 @@ class Soal extends Users_Controller
 			$method_option = 'get_option_' . $tipe_option;
 
 			$data_soal = $this->$method_soal($id);
-			$this->m_soal->insert_soal($data_soal);
+			$id = $this->m_soal->insert_soal($data_soal);
 
 			$data_option = $this->$method_option($id);
 			$this->m_soal->insert_option($data_option);
@@ -363,7 +363,7 @@ class Soal extends Users_Controller
 	public function get_soal_teks($id)
 	{
 		$data = [
-			'id' => $id,
+			'kode' => $id,
 			'bank_soal_id' => $this->input->get('b'),
 			'type' => 'teks',
 			'text' => $this->input->post('text'),
@@ -374,7 +374,7 @@ class Soal extends Users_Controller
 	public function get_soal_gambar($id)
 	{
 		$data = [
-			'id' => $id,
+			'kode' => $id,
 			'bank_soal_id' => $this->input->get('b'),
 			'type' => 'gambar',
 			'text' => $this->input->post('text'),
@@ -386,7 +386,7 @@ class Soal extends Users_Controller
 	public function get_soal_audio($id)
 	{
 		$data = [
-			'id' => $id,
+			'kode' => $id,
 			'bank_soal_id' => $this->input->get('b'),
 			'type' => 'audio',
 			'audio' => $this->input->post('text'),
@@ -515,12 +515,12 @@ class Soal extends Users_Controller
 	public function generate_id()
 	{
 		$data = $this->m_soal->get_number($this->input->get('b'))->row();
-		if (!$data->id)
-			$id = 'S-1';
+		if (!$data->kode)
+			$kode = 'S-1';
 		else {
-			$id = substr($data->id, 2) + 1;
-			$id = 'S-' . $id;
+			$id = substr($data->kode, 2) + 1;
+			$kode = 'S-' . $id;
 		}
-		return $id;
+		return $kode;
 	}
 }
