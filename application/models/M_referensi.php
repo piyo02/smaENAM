@@ -18,12 +18,13 @@ class M_referensi extends MY_Model
     return $this->db->get($this->table);
   }
 
-  public function get_sum_soal($data_param)
+  public function get_sum_soal($data_param, $bank_soal_id)
   {
     $this->db->select_sum('pg');
     $this->db->select_sum('isian');
     $this->db->select_sum('esai');
     $this->db->where($data_param);
+    $this->db->where($bank_soal_id);
     return $this->db->get($this->table);
   }
 

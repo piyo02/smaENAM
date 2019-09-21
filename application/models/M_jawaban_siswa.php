@@ -1,9 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class M_jawaban extends MY_Model
+class M_jawaban_siswa extends MY_Model
 {
-  protected $table = "tabel_jawaban";
+  protected $table = "tabel_jawaban_siswa";
 
   function __construct()
   {
@@ -18,9 +18,9 @@ class M_jawaban extends MY_Model
    * @return static
    * @author madukubah
    */
-  public function create($data)
+  public function insert_batch_soal($data)
   {
-    $this->db->insert($this->table, $data);
+    return $this->db->insert_batch($this->table, $data);
   }
   /**
    * update
@@ -87,35 +87,9 @@ class M_jawaban extends MY_Model
    * @return static
    * @author madukubah
    */
-  public function get_soal($bank_soal_id, $limit, $start)
+  public function get_soal_id($data_param)
   {
-    $this->db->select($this->table . '.id');
-    $this->db->select($this->table . '.nomor');
-    $this->db->select($this->table . '.type');
-    $this->db->select($this->table . '.text');
-    $this->db->select($this->table . '.gambar');
-    $this->db->select($this->table . '.audio');
-    $this->db->select('tabel_jawaban.id AS jawaban_id');
-    $this->db->select('tabel_jawaban.jawaban');
-    $this->db->select('tabel_jawaban.skor');
-    $this->db->join(
-      'tabel_jawaban',
-      'tabel_jawaban.soal_id = ' . $this->table . '.id',
-      'left'
-    );
-    $this->db->where($this->table . '.bank_soal_id', $bank_soal_id, $limit, $start);
-    $this->db->where('tabel_jawaban.skor !=', 0);
-    $this->db->order_by($this->table . '.nomor', 'asc');
-    return $this->db->get($this->table);
-  }
-
-  public function get_soal_by_id($data_param)
-  {
-    $this->db->select($this->table . '.id');
-    $this->db->select($this->table . '.type');
-    $this->db->select($this->table . '.text');
-    $this->db->select($this->table . '.gambar');
-    $this->db->select($this->table . '.audio');
+    $this->db->select('soal_id');
     $this->db->where($data_param);
     return $this->db->get($this->table);
   }
