@@ -5,7 +5,7 @@ class Ulangan_services
   public $r          = '';
   public $nama       = '';
   public $kelas_id   = '';
-  public $date_range = '';
+  public $waktu_mulai = '';
   public $durasi     = '';
   public $kkm        = '';
   public $nilai_maks = '';
@@ -100,11 +100,11 @@ class Ulangan_services
         'label' => 'Pilih Kelas',
         'rules' =>  'trim|required',
       ),
-      // array(
-      //   'field' => 'date_range',
-      //   'label' => 'Jangka Waktu',
-      //   'rules' =>  'trim|required',
-      // ),
+      array(
+        'field' => 'waktu_mulai',
+        'label' => 'Tanggal Ulangan',
+        'rules' =>  'trim|required',
+      ),
       array(
         'field' => 'durasi',
         'label' => 'Durasi Ulangan',
@@ -126,7 +126,7 @@ class Ulangan_services
       $this->r          = '';
       $this->nama       = $data->nama;
       $this->kelas_id   = $data->kelas_id;
-      $this->date_range = '';
+      $this->waktu_mulai = $data->waktu_mulai;
       $this->durasi     = $data->durasi;
       $this->kkm        = $data->kkm;
       $this->nilai_maks = $data->nilai_maks;
@@ -149,10 +149,10 @@ class Ulangan_services
         'options' => $select,
         'selected' => $this->kelas_id,
       ),
-      "date_range" => array(
+      "waktu_mulai" => array(
         'type' => 'date_range',
-        'label' => "Waktu Mulai - Waktu Selesai",
-        'value' => $this->date_range,
+        'label' => "Tanggal Ulangan",
+        'value' => $this->waktu_mulai,
       ),
       "durasi" => array(
         'type' => 'number',
@@ -189,9 +189,10 @@ class Ulangan_services
         'value' => $data->class,
       ),
       "waktu_mulai" => array(
-        'type' => 'date_range',
-        'label' => "Waktu Mulai - Waktu Selesai",
+        'type' => 'text',
+        'label' => "Tanggal Ulangan",
         'readonly' => 'readonly',
+        'value' => $data->waktu_mulai,
       ),
       "durasi" => array(
         'type' => 'number',

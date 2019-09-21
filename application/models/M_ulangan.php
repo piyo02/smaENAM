@@ -20,7 +20,18 @@ class M_ulangan extends MY_Model
    */
   public function create($data)
   {
-    return $this->db->insert('tabel_ulangan', $data);
+    // Filter the data passed
+    $data = $this->_filter_data($this->table, $data);
+
+    $this->db->insert($this->table, $data);
+    $id = $this->db->insert_id($this->table . '_id_seq');
+
+    if (isset($id)) {
+      $this->set_message("berhasil");
+      return $id;
+    }
+    $this->set_error("gagal");
+    return FALSE;
   }
 
   public function create_ref($data)
@@ -126,13 +137,23 @@ class M_ulangan extends MY_Model
     return $this->db->get('tabel_referensi_soal');
   }
 
-  public function get_ulangan($data_param)
+  public function get_ulangan($data_param, $user_id = null)
   {
     $this->db->select('tabel_ulangan.id');
     $this->db->select('tabel_ulangan.nama');
     $this->db->select('tabel_ulangan.durasi');
     $this->db->select('tabel_ulangan.kkm');
     $this->db->select('tabel_kelas.nama AS class');
+    if ($user_id) {
+      $this->db->select('tabel_hasil_ulangan.nilai');
+      $this->db->join(
+        'tabel_hasil_ulangan',
+        'tabel_hasil_ulangan.ulangan_id = tabel_ulangan.id',
+        'left'
+      );
+      $this->db->where('user_id', $user_id);
+      $this->db->or_where('user_id is null');
+    }
     $this->db->join(
       'tabel_kelas',
       'tabel_kelas.id = tabel_ulangan.kelas_id',

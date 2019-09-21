@@ -39,6 +39,14 @@
 <script src="<?= base_url('assets/') ?>dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="<?= base_url('assets/') ?>dist/js/demo.js"></script>
+<!-- Select2 -->
+<script src="<?= base_url('assets/') ?>plugins/select2/js/select2.full.min.js"></script>
+<!-- Bootstrap4 Duallistbox -->
+<script src="<?= base_url('assets/') ?>plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<!-- InputMask -->
+<script src="<?= base_url('assets/') ?>plugins/inputmask/jquery.inputmask.bundle.js"></script>
+<!-- bootstrap color picker -->
+<script src="<?= base_url('assets/') ?>plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
 
 <script>
     $(document).ready(function() {
@@ -73,6 +81,7 @@
             format: 'MM/DD/YYYY hh:mm A'
         }
     })
+    $('[data-mask]').inputmask()
 </script>
 </body>
 

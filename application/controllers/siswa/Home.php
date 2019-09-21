@@ -11,7 +11,7 @@ class Home extends Siswa_Controller
 	public function index()
 	{
 		$data_param['kelas_id'] = $this->session->userdata('class_id');
-		$this->data['rows'] = $this->m_ulangan->get_ulangan($data_param)->result();
+		$this->data['rows'] = $this->m_ulangan->get_ulangan($data_param, $this->session->userdata('user_id'))->result();
 		$this->data["page_title"] = "Beranda";
 		$this->render("siswa/dashboard/content");
 	}

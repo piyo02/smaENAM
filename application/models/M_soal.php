@@ -20,7 +20,18 @@ class M_soal extends MY_Model
    */
   public function create($data)
   {
+    // Filter the data passed
+    $data = $this->_filter_data($this->table, $data);
+
     $this->db->insert($this->table, $data);
+    $id = $this->db->insert_id($this->table . '_id_seq');
+
+    if (isset($id)) {
+      $this->set_message("berhasil");
+      return $id;
+    }
+    $this->set_error("gagal");
+    return FALSE;
   }
   /**
    * update

@@ -62,15 +62,16 @@ class Ulangan extends Users_Controller
         // echo var_dump( $data );return;
         $this->form_validation->set_rules($this->services->validation_config());
         if ($this->form_validation->run() === TRUE) {
-            $id = $this->generate_id();
-            $data['id']         = $id;
+
             $data['kelas_id']   = $this->input->post('kelas_id');
             $data['creator_id'] = $this->session->userdata('user_id');
             $data['nama']       = $this->input->post('nama');
-            $data['waktu_mulai'] = $this->input->post('date_range');
+            $data['waktu_mulai'] = $this->input->post('waktu_mulai');
             $data['durasi']     = $this->input->post('durasi');
             $data['kkm']        = $this->input->post('kkm');
             $data['nilai_maks'] = $this->input->post('nilai_maks');
+            //insert soal
+            $id = $this->m_ulangan->create($data);
 
             $r = $this->input->post('r');
             for ($i = 0; $i < $r; $i++) {
@@ -83,11 +84,12 @@ class Ulangan extends Users_Controller
                 ];
             }
 
-            if ($this->m_ulangan->create($data) && $this->m_ulangan->create_ref($data_ref)) {
+            if ($this->m_ulangan->create_ref($data_ref)) {
                 $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_ulangan->messages()));
             } else {
                 $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_ulangan->errors()));
             }
+            $this->session->unset_userdata('r');
             redirect(site_url($this->current_page));
         } else {
             $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
@@ -95,7 +97,13 @@ class Ulangan extends Users_Controller
 
 
             $bank_soal['bank_soal'] = $this->m_bank_soal->bank_soal($this->user_id)->result();
-            $bank_soal['referensi'] = $this->input->get('r');
+            if ($this->input->get('r')) {
+                $bank_soal['referensi'] = $this->input->get('r');
+                $this->session->set_userdata(['r' => $this->input->get('r')]);
+            } else {
+                $bank_soal['referensi'] = $this->session->userdata('r');
+            }
+
             $table_referensi = $this->load->view('templates/tables/plain_table_referensi', $bank_soal, TRUE);
 
 
@@ -228,16 +236,5 @@ class Ulangan extends Users_Controller
             $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_ulangan->errors()));
         }
         redirect(site_url($this->current_page));
-    }
-
-    public function generate_id()
-    {
-        $ulangan = $this->m_ulangan->get_max_id()->row();
-        $id = 'U-1';
-        if ($ulangan->id) {
-            $id = substr($ulangan->id, 2) + 1;
-            $id = 'U-' . $id;
-        }
-        return $id;
     }
 }

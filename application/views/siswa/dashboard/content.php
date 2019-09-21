@@ -62,7 +62,7 @@
                             echo '<div class="col-2"></div>';
                             for ($j = 0; $j < 2; $j++) { ?>
                             <div class="col-4">
-                                <form action="<?= base_url('siswa/tes') ?>">
+                                <form action="<?= base_url('siswa/tes') ?>" method="post">
                                     <input type="hidden" name="id" value="<?= $rows[$k]->id ?>">
                                     <div class="card card-outline card-success">
                                         <div class="card-header row justify-content-center">
@@ -78,8 +78,12 @@
                                                 </div>
                                             </div>
                                             <div class="row justify-content-between">
-                                                <button class="btn btn-default">80</button>
-                                                <button type="submit" class="btn btn-success">Review</button>
+                                                <?php if ($rows[$k]->nilai) : ?>
+                                                    <button class="btn btn-default"><?= $rows[$k]->nilai; ?></button>
+                                                    <button type="submit" class="btn btn-success">Review</button>
+                                                <?php else : ?>
+                                                    <button type="submit" class="btn btn-primary">Kerjakan</button>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                 </form>

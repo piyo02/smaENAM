@@ -79,4 +79,15 @@ class M_kelas extends MY_Model
     $this->db->where('id !=', 1);
     return $this->db->get('tabel_kelas');
   }
+
+  public function list_class()
+  {
+    $classes = $this->get_class()->result();
+    $list[] = '-- Pilih Kelas --';
+    foreach ($classes as $key => $class) {
+      if ($class->id != 1)
+        $list[$class->id] = $class->nama;
+    }
+    return $list;
+  }
 }

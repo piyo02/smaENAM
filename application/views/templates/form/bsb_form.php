@@ -88,9 +88,9 @@
                         <label class="control-label">' . $attr["label"] . '</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="far fa-clock"></i></span>
+                                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                             </div>
-                            <input type="text" class="form-control float-right" name="' . $form_name . '" id="reservationtime">
+                            <input type="date" class="form-control" data-inputmask="\'alias\': \'dd/mm/yyyy\'" data-mask name="' . $form_name . '" id="' . $form_name . '">
                         </div>
                     </div>';
                 break;

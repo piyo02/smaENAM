@@ -12,7 +12,7 @@
                 <?php echo form_open(""); ?>
                 <div class="row">
                     <div class="col-md-6">
-                        <label>First name: </label>
+                        <label>Nama Depan: </label>
                         <div class="input-group mb-3">
                             <?php echo form_input($first_name); ?>
                             <div class="input-group-append">
@@ -23,7 +23,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label for="nama_lengkap">Last name: </label>
+                        <label for="nama_lengkap">Nama Belakang: </label>
                         <div class="input-group mb-3">
                             <?php echo form_input($last_name); ?>
                             <div class="input-group-append">
@@ -43,12 +43,27 @@
                         </div>
                     </div>
                 </div>
-                <label for="nomor_telepon">Phone: </label>
-                <div class="input-group mb-3">
-                    <?php echo form_input($phone); ?>
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-address-book"></span>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="nomor_telepon">Kelas: </label>
+                        <div class="input-group mb-3">
+                            <?php echo form_dropdown($class_id); ?>
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-address-book"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="nomor_telepon">Nomor Telepon: </label>
+                        <div class="input-group mb-3">
+                            <?php echo form_input($phone); ?>
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-address-book"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,7 +96,7 @@
                 <div class="row">
                     <div class="col-8"></div>
                     <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
                     </div>
                 </div>
                 </form>

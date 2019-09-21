@@ -16,6 +16,7 @@ class Auth extends Public_Controller
             'language'
         ));
         $this->lang->load('auth');
+        $this->load->model('m_kelas');
     }
 
     public function login()
@@ -49,16 +50,16 @@ class Auth extends Public_Controller
         $tables                        = $this->config->item('tables', 'ion_auth');
         $identity_column               = $this->config->item('identity', 'ion_auth');
         $this->data['identity_column'] = $identity_column;
-
         // validate form input
         $this->form_validation->set_rules('first_name', $this->lang->line('create_user_validation_fname_label'), 'trim|required');
         $this->form_validation->set_rules('last_name', $this->lang->line('create_user_validation_lname_label'), 'trim|required');
         if ($identity_column !== 'email') {
-            $this->form_validation->set_rules('identity', $this->lang->line('create_user_validation_identity_label'), 'trim|required|is_unique[' . $tables['users'] . '.' . $identity_column . ']');
+            // $this->form_validation->set_rules('identity', $this->lang->line('create_user_validation_identity_label'), 'trim|required|is_unique[' . $tables['users'] . '.' . $identity_column . ']');
             $this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'trim|required|valid_email');
         } else {
             $this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'trim|required|valid_email|is_unique[' . $tables['users'] . '.email]');
         }
+        $this->form_validation->set_rules('class_id', $this->lang->line('create_user_validation_class_label'), 'required');
         $this->form_validation->set_rules('phone', $this->lang->line('create_user_validation_phone_label'), 'trim');
         $this->form_validation->set_rules('password', $this->lang->line('create_user_validation_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('create_user_validation_password_confirm_label'), 'required');
@@ -71,16 +72,18 @@ class Auth extends Public_Controller
             $additional_data = array(
                 'first_name' => $this->input->post('first_name'),
                 'last_name' => $this->input->post('last_name'),
-                'phone' => $this->input->post('phone')
+                'phone' => $this->input->post('phone'),
+                'class_id' => $this->input->post('class_id')
             );
         }
-        if ($this->form_validation->run() === TRUE && $this->ion_auth->register($identity, $password, $email, $additional_data, 2)) {
+        if ($this->form_validation->run() === TRUE && $this->ion_auth->register($identity, $password, $email, $additional_data, 3)) {
 
             // check to see if we are creating the user
             // redirect them back to the admin page
             $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->ion_auth->messages()));
             redirect("auth/login", 'refresh');
         } else {
+            $select = $this->m_kelas->list_class();
             $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
             if (!empty(validation_errors()) || $this->ion_auth->errors())
                 $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
@@ -112,6 +115,15 @@ class Auth extends Public_Controller
                 'placeholder' => 'Email',
                 'class' => 'form-control',
                 'value' => $this->form_validation->set_value('email')
+            );
+            $this->data['class_id']            = array(
+                'name' => 'class_id',
+                'id' => 'class_id',
+                'type' => 'select',
+                'placeholder' => 'Pilih Kelas',
+                'class' => 'form-control',
+                'options' => $select,
+                'selected' => $this->form_validation->set_value('class_id')
             );
             $this->data['phone']            = array(
                 'name' => 'phone',
