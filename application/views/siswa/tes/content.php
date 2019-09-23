@@ -159,21 +159,21 @@ if (isset($siswa) && isset($ulangan->durasi)) {
 
                         detik--;
 
-                        if (detik < 0) {
-                            detik = 59;
-                            menit--;
+                        // if (detik < 0) {
+                        //     detik = 59;
+                        //     menit--;
 
-                            if (menit < 0) {
-                                menit = 59;
-                                jam--;
+                        //     if (menit < 0) {
+                        //         menit = 59;
+                        //         jam--;
 
-                                if (jam < 0) {
-                                    clearInterval();
-                                    var formSoal = document.getElementById('formSoal');
-                                    formSoal.submit();
-                                }
-                            }
-                        }
+                        //         if (jam < 0) {
+                        //             clearInterval();
+                        //             var formSoal = document.getElementById('formSoal');
+                        //             formSoal.submit();
+                        //         }
+                        //     }
+                        // }
                     }
 
                     function work() {
