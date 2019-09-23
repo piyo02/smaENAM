@@ -71,41 +71,42 @@ foreach ($bank_soal as $key => $value) {
         </div>
     </div>
 </div>
+<?php for ($j = 0; $j < $i; $j++) : ?>
+    <script>
+        $(document).ready(function() {
+            $('#bank_soal_id_' + <?= $j ?>).change(function() {
+                var bank_soal_id = $(this).val();
+                console.log(bank_soal_id);
+                $.ajax({
+                    type: 'POST', //method
+                    url: '<?= base_url('guru/bank_soal/count_type') ?>', //action
+                    data: {
+                        id: bank_soal_id
+                    }, //data yang dikrim ke action $_POST['id']
+                    dataType: 'json',
+                    async: false,
+                    success: function(data) {
+                        var html_pg = '<option value=""> - </option>';
+                        var html_isian = '<option value=""> - </option>';
+                        var html_esai = '<option value=""> - </option>';
 
-<script>
-    $(document).ready(function() {
-        $('#bank_soal_id_' + <?= 0 ?>).change(function() {
-            var bank_soal_id = $(this).val();
-            console.log(bank_soal_id);
-            $.ajax({
-                type: 'POST', //method
-                url: '<?= base_url('guru/bank_soal/count_type') ?>', //action
-                data: {
-                    id: bank_soal_id
-                }, //data yang dikrim ke action $_POST['id']
-                dataType: 'json',
-                async: false,
-                success: function(data) {
-                    var html_pg = '<option value=""> - </option>';
-                    var html_isian = '<option value=""> - </option>';
-                    var html_esai = '<option value=""> - </option>';
-
-                    var i;
-                    for (i = 1; i <= data.pg; i++) {
-                        html_pg += '<option value="' + i + '"' + '>' + i + '</option>'
+                        var i;
+                        for (i = 1; i <= data.pg; i++) {
+                            html_pg += '<option value="' + i + '"' + '>' + i + '</option>'
+                        }
+                        for (i = 1; i <= data.isian; i++) {
+                            html_isian += '<option value="' + i + '"' + '>' + i + '</option>'
+                        }
+                        for (i = 1; i <= data.esai; i++) {
+                            html_esai += '<option value="' + i + '"' + '>' + i + '</option>'
+                        }
+                        console.log(data);
+                        $('#pg_<?= $j ?>').html(html_pg);
+                        $('#isian_<?= $j ?>').html(html_isian);
+                        $('#esai_<?= $j ?>').html(html_esai);
                     }
-                    for (i = 1; i <= data.isian; i++) {
-                        html_isian += '<option value="' + i + '"' + '>' + i + '</option>'
-                    }
-                    for (i = 1; i <= data.esai; i++) {
-                        html_esai += '<option value="' + i + '"' + '>' + i + '</option>'
-                    }
-                    console.log(data);
-                    $('#pg_0').html(html_pg);
-                    $('#isian_0').html(html_isian);
-                    $('#esai_0').html(html_esai);
-                }
-            });
-        })
-    });
-</script>
+                });
+            })
+        });
+    </script>
+<?php endfor; ?>

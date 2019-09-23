@@ -16,6 +16,7 @@ class Hasil_ulangan extends Users_Controller
         $this->excel = new Excel_services;
         $this->load->model(array(
             'm_bank_soal',
+            'm_soal',
             'm_mapel',
             'm_ulangan',
             'm_jawaban_siswa',
@@ -128,15 +129,39 @@ class Hasil_ulangan extends Users_Controller
             'ulangan_id' => $detail->ulangan_id,
             'user_id' => $detail->user_id,
         ];
-        $soal = $this->m_jawaban_siswa->get_soal_id($data_param)->result();
-        #################################################################3
-        foreach ($soal as $key => $id) {
-            $id = $id->soal_id;
-            break;
-        }
+        $quests = $this->m_jawaban_siswa->get_soal_id($data_param)->result();
         #################################################################3
         $review = $this->services->tabel_hasil_ulangan($this->current_page);
-        // $review["rows"] = $this->m_hasil_ulangan->get_hasil_ulangan($id)->result();
+        if (null === $this->input->get('id')) {
+            foreach ($quests as $key => $soal) {
+                $soal_id = $soal->soal_id;
+                break;
+            }
+        } else {
+            $soal_id = $this->input->get('id');
+        }
+        //soal
+        $param['id'] = $soal_id;
+        $review['soal'] = $this->m_soal->get_soal_by_id($param)->row();
+
+        //option
+        $param = ['soal_id' => $soal_id];
+        $review['options'] = $this->m_soal->get_option_by_id($param)->result();
+
+        //jawaban siswa
+        $param['ulangan_id'] = $detail->ulangan_id;
+        $review['jawaban'] = $this->m_jawaban_siswa->get_jawaban_siswa_by_id($param)->row();
+        // var_dump($review['jawaban']);
+        // die;
+        #################################################################3
+        //nomor
+        $nomor = 1;
+        if (null !== $this->input->get('nomor'))
+            $nomor = $this->input->get('nomor');
+        $review["nomor"] = $nomor;
+
+
+        //////////////////////////////////////////////////////////////
         $review = $this->load->view('siswa/review/guru', $review, true);
         $this->data["contents"] = $review;
 
@@ -151,7 +176,7 @@ class Hasil_ulangan extends Users_Controller
         $this->data["header_button"] =  $add_menu;
         #################################################################3
         $alert = $this->session->flashdata('alert');
-        $this->data["quests"] = $soal;
+        $this->data["quests"] = $quests;
         $this->data["key"] = $this->input->get('key', FALSE);
         $this->data["alert"] = (isset($alert)) ? $alert : NULL;
         $this->data["current_page"] = $this->current_page;

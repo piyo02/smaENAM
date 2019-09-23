@@ -104,4 +104,13 @@ class M_jawaban_siswa extends MY_Model
     $this->db->where($data_param);
     return $this->db->get($this->table);
   }
+
+  public function get_jawaban_siswa_by_id($data_param)
+  {
+    $this->db->select('id');
+    $this->db->select('jawaban');
+    $this->db->select('skor');
+    $this->db->where($data_param);
+    return $this->db->get($this->table);
+  }
 }

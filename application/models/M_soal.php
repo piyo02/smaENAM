@@ -116,7 +116,7 @@ class M_soal extends MY_Model
   public function get_soal_by_id($data_param)
   {
     $this->db->select($this->table . '.id');
-    $this->db->select($this->table . '.id');
+    $this->db->select($this->table . '.kode');
     $this->db->select($this->table . '.bank_soal_id');
     $this->db->select($this->table . '.type');
     $this->db->select($this->table . '.text');
