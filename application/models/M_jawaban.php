@@ -119,4 +119,12 @@ class M_jawaban extends MY_Model
     $this->db->where($data_param);
     return $this->db->get($this->table);
   }
+
+  public function get_jawaban($data_param)
+  {
+    $this->db->select('skor');
+    $this->db->select('jawaban');
+    $this->db->where($data_param);
+    return $this->db->get($this->table);
+  }
 }

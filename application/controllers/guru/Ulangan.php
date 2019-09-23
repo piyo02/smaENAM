@@ -66,7 +66,7 @@ class Ulangan extends Users_Controller
             $data['kelas_id']   = $this->input->post('kelas_id');
             $data['creator_id'] = $this->session->userdata('user_id');
             $data['nama']       = $this->input->post('nama');
-            $data['waktu_mulai'] = $this->input->post('waktu_mulai');
+            $data['waktu_mulai'] = strtotime($this->input->post('waktu_mulai'));
             $data['durasi']     = $this->input->post('durasi');
             $data['kkm']        = $this->input->post('kkm');
             $data['nilai_maks'] = $this->input->post('nilai_maks');
@@ -169,7 +169,7 @@ class Ulangan extends Users_Controller
         if ($this->form_validation->run() === TRUE) {
             $data['nama']       = $this->input->post('nama');
             $data['kelas_id']   = $this->input->post('kelas_id');
-            // $data['date_range'] = $this->input->post('kelas_id');
+            $data['waktu_mulai'] = strtotime($this->input->post('waktu_mulai'));
             $data['durasi']     = $this->input->post('durasi');
             $data['kkm']        = $this->input->post('kkm');
             $data['nilai_maks'] = $this->input->post('nilai_maks');

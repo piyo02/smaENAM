@@ -229,6 +229,11 @@ class Soal_services
 					'label' => 'id',
 					'value' => $data[$i]->id,
 				);
+				$_data["form_data"]['type'] = array(
+					'type' => 'hidden',
+					'label' => 'type option',
+					'value' => 'teks'
+				);
 			}
 		}
 		$_data["form_data"]['jawaban_5'] = array(
@@ -243,8 +248,6 @@ class Soal_services
 			),
 			'selected' => $value
 		);
-		// var_dump($_data);
-		// die;
 		return $_data;
 	}
 
@@ -303,6 +306,11 @@ class Soal_services
 				'label' => "id",
 				'value' => $data[0]->id,
 			);
+			$_data["form_data"]['type'] = array(
+				'type' => 'hidden',
+				'label' => 'type option',
+				'value' => 'isian'
+			);
 		}
 		return $_data;
 	}
@@ -315,14 +323,24 @@ class Soal_services
 			'readonly' => 'readonly',
 			'value' => 'Soal esai'
 		);
-		if ($data)
-			$_data["form_data"]['jawaban_4']['type'] = 'hidden';
 		$_data["form_data"]['skor'] = array(
-			'type' => 'hidden',
+			'type' => 'number',
 			'label' => "Skor",
-			'value' => "-2",
-			'readonly' => 'readonly'
 		);
+		if ($data) {
+			$_data["form_data"]['jawaban_4']['type'] = 'hidden';
+			$_data["form_data"]['skor']['value'] = $data[0]->skor;
+			$_data["form_data"]['data_4'] = array(
+				'type' => 'hidden',
+				'label' => "id",
+				'value' => $data[0]->id,
+			);
+			$_data["form_data"]['type'] = array(
+				'type' => 'hidden',
+				'label' => 'type option',
+				'value' => 'esai'
+			);
+		}
 		return $_data;
 	}
 

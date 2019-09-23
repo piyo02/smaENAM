@@ -53,8 +53,7 @@ class M_ulangan extends MY_Model
     $this->db->update($this->table, $data, $data_param);
 
     if ($ref)
-      if (!$this->db->update_batch('tabel_referensi_soal', $ref, 'id'))
-        return FALSE;
+      $this->db->update_batch('tabel_referensi_soal', $ref, 'id');
 
     if ($this->db->trans_status() === FALSE) {
       $this->db->trans_rollback();
@@ -143,6 +142,7 @@ class M_ulangan extends MY_Model
     $this->db->select('tabel_ulangan.nama');
     $this->db->select('tabel_ulangan.durasi');
     $this->db->select('tabel_ulangan.kkm');
+    $this->db->select('tabel_ulangan.nilai_maks');
     $this->db->select('tabel_kelas.nama AS class');
     if ($user_id) {
       $this->db->select('tabel_hasil_ulangan.nilai');
@@ -173,9 +173,10 @@ class M_ulangan extends MY_Model
       'join'
     );
     $this->db->where('tabel_soal.bank_soal_id', $id);
-    $this->db->where('tabel_jawaban.type', $type1);
-    if ($type2)
-      $this->db->or_where('tabel_jawaban.type', $type2);
+    if ($type2 == null)
+      $this->db->where('tabel_jawaban.type', $type1);
+    else
+      $this->db->where('(tabel_jawaban.type = "' . $type1 . '" OR tabel_jawaban.type = "' . $type2 . '")');
     return $this->db->get('tabel_soal');
   }
 

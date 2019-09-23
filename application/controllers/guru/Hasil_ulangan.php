@@ -18,6 +18,7 @@ class Hasil_ulangan extends Users_Controller
             'm_bank_soal',
             'm_mapel',
             'm_ulangan',
+            'm_jawaban_siswa',
             'm_hasil_ulangan',
         ));
     }
@@ -121,14 +122,36 @@ class Hasil_ulangan extends Users_Controller
 
     public function review($id)
     {
+        $data_param['id'] = $id;
+        $detail = $this->m_hasil_ulangan->get_detail_ulangan($data_param)->row();
+        $data_param = [
+            'ulangan_id' => $detail->ulangan_id,
+            'user_id' => $detail->user_id,
+        ];
+        $soal = $this->m_jawaban_siswa->get_soal_id($data_param)->result();
         #################################################################3
-        // $table = $this->services->tabel_hasil_ulangan($this->current_page);
-        // $table["rows"] = $this->m_hasil_ulangan->get_hasil_ulangan($id)->result();
-        // $table = $this->load->view('templates/tables/plain_table_12', $table, true);
-        // $this->data["contents"] = $table;
+        foreach ($soal as $key => $id) {
+            $id = $id->soal_id;
+            break;
+        }
+        #################################################################3
+        $review = $this->services->tabel_hasil_ulangan($this->current_page);
+        // $review["rows"] = $this->m_hasil_ulangan->get_hasil_ulangan($id)->result();
+        $review = $this->load->view('siswa/review/guru', $review, true);
+        $this->data["contents"] = $review;
 
+        $add_menu = array(
+            "name" => "Kembali",
+            "button_color" => "success",
+            "url" => site_url($this->current_page . "detail/" . $detail->ulangan_id),
+            'param' => null
+        );
+
+        $add_menu = $this->load->view('templates/actions/link', $add_menu, true);
+        $this->data["header_button"] =  $add_menu;
         #################################################################3
         $alert = $this->session->flashdata('alert');
+        $this->data["quests"] = $soal;
         $this->data["key"] = $this->input->get('key', FALSE);
         $this->data["alert"] = (isset($alert)) ? $alert : NULL;
         $this->data["current_page"] = $this->current_page;

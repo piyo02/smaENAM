@@ -127,12 +127,12 @@ class Soal extends Users_Controller
 			$data_option = $this->$method_option($id);
 			$this->m_soal->insert_option($data_option);
 
-			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->ion_auth->messages()));
+			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_soal->messages()));
 			redirect(site_url($this->current_page . 'daftar_soal/' . $bank_soal_id));
 		} else {
 
-			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
-			if (!empty(validation_errors()) || $this->ion_auth->errors()) $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
+			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->m_soal->errors() ? $this->m_soal->errors() : $this->session->flashdata('message')));
+			if (!empty(validation_errors()) || $this->m_soal->errors()) $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
 
 			$add_menu = array(
 				"name" => "Kembali",
@@ -185,18 +185,26 @@ class Soal extends Users_Controller
 				$data['gambar'] = $this->upload_soal_gambar($soal_id, 1);
 
 			$_data_option = '';
-			if ($_FILES['jawaban']['name'] != '')
+			if (isset($_FILES['jawaban']) && $_FILES['jawaban']['name'] != '')
 				$_data_option = $this->get_option_gambar_edit($soal_id);
+
+			//mengambil option yang benar
+			if (null !== $this->input->post('type')) {
+				$tipe_option = $this->input->post('type');
+				$form_option = 'get_option_' . $tipe_option;
+				$_data_option = $this->$form_option($soal_id);
+			}
+
 			if ($this->m_soal->update($data, $_data_option, $soal_id)) {
-				$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->ion_auth->messages()));
+				$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_soal->messages()));
 				redirect(site_url($this->current_page)  . 'daftar_soal/' . $bank_soal_id);
 			} else {
-				$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->ion_auth->errors()));
+				$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_soal->errors()));
 				redirect(site_url($this->current_page)  . 'daftar_soal/' . $bank_soal_id);
 			}
 		} else {
-			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
-			if (!empty(validation_errors()) || $this->ion_auth->errors()) $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
+			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->m_soal->errors() ? $this->m_soal->errors() : $this->session->flashdata('message')));
+			if (!empty(validation_errors()) || $this->m_soal->errors()) $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
 
 			$alert = $this->session->flashdata('alert');
 			$this->data["key"] = $this->input->get('key', FALSE);
@@ -213,14 +221,12 @@ class Soal extends Users_Controller
 			$form_data = $this->services->$form_data($_soal);
 
 
-
 			$data_param = [
 				'soal_id' => $soal_id
 			];
 			$_option = $this->m_soal->get_option_by_id($data_param)->result();
 			$form_option = 'get_form_option_' . $_option[0]->type;
 			$form_data_option = $this->services->$form_option($_option);
-
 
 			$form_data['form_data'] = array_merge($form_data['form_data'], $form_data_option['form_data']);
 			if (isset($form_data_option['data']))
@@ -288,9 +294,9 @@ class Soal extends Users_Controller
 		$soal_id = $this->input->post('id');
 		$bank_soal_id = $this->input->post('bank_soal_id');
 		if ($this->m_soal->delete($soal_id)) {
-			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->ion_auth->messages()));
+			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_soal->messages()));
 		} else {
-			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->ion_auth->errors()));
+			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_soal->errors()));
 		}
 		redirect(site_url($this->current_page . 'daftar_soal/' . $bank_soal_id));
 	}
@@ -405,7 +411,8 @@ class Soal extends Users_Controller
 			$_option['skor']    = 0;
 			if (null !== $this->input->post('jawaban_5') && $this->input->post('jawaban_5') == $i)
 				$_option['skor'] = 1;
-
+			if (null !== $this->input->post('data_' . $i))
+				$_option['id'] = $this->input->post('data_' . $i);
 			$_data_option[] = $_option;
 		}
 		return $_data_option;
@@ -489,10 +496,14 @@ class Soal extends Users_Controller
 		return $data['jawaban'];
 	}
 
-	public function get_option_isian($id)
+	public function get_option_isian($soal_id)
 	{
+		$id = null;
+		if (null !== $this->input->post('data_4'))
+			$id = $this->input->post('data_4');
 		$data[] = [
-			'soal_id' => $id,
+			'id' => $id,
+			'soal_id' => $soal_id,
 			'type' => 'isian',
 			'jawaban' => $this->input->post('jawaban_4'),
 			'skor' => $this->input->post('skor'),
@@ -500,14 +511,19 @@ class Soal extends Users_Controller
 		return $data;
 	}
 
-	public function get_option_esai($id)
+	public function get_option_esai($soal_id)
 	{
+		$id = null;
+		if (null !== $this->input->post('data_4'))
+			$id = $this->input->post('data_4');
 		$data[] = [
-			'soal_id' => $id,
+			'id' => $id,
+			'soal_id' => $soal_id,
 			'type' => 'esai',
 			'jawaban' => $this->input->post('jawaban_4'),
-			'skor' => -2,
+			'skor' => $this->input->post('skor'),
 		];
+
 		return $data;
 	}
 

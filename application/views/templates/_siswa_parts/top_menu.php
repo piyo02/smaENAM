@@ -14,7 +14,7 @@
     </ul>
 <?php else : ?>
     <div class="row justify-content-center">
-        <h2 class="text-danger" id="timer">00 : 00 : 00</h2>
+        <div id="timer"></div>
     </div>
 <?php endif; ?>
 </div>

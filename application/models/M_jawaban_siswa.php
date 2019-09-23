@@ -89,7 +89,18 @@ class M_jawaban_siswa extends MY_Model
    */
   public function get_soal_id($data_param)
   {
+    $this->db->select('id');
     $this->db->select('soal_id');
+    $this->db->select('option');
+    $this->db->select('jawaban');
+    $this->db->select('uncertain');
+    $this->db->where($data_param);
+    return $this->db->get($this->table);
+  }
+
+  public function get_skor($data_param)
+  {
+    $this->db->select_sum('skor');
     $this->db->where($data_param);
     return $this->db->get($this->table);
   }

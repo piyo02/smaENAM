@@ -52,13 +52,13 @@ class M_soal extends MY_Model
     if ($this->db->trans_status() === FALSE) {
       $this->db->trans_rollback();
 
-      $this->set_error("gagal");
+      $this->set_error("Soal gagal di edit");
       return FALSE;
     }
 
     $this->db->trans_commit();
 
-    $this->set_message("berhasil");
+    $this->set_message("Soal berhasil diedit");
     return TRUE;
   }
   /**
@@ -79,7 +79,7 @@ class M_soal extends MY_Model
     if (!$this->db->delete($this->table))
       return false;
 
-    $this->set_message("berhasil"); //('group_delete_successful');
+    $this->set_message("Soal berhasil di hapus"); //('group_delete_successful');
     return TRUE;
   }
 

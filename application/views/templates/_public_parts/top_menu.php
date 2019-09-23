@@ -19,7 +19,7 @@
                                 $url =  site_url('user');
                                 break;
                             case 3:
-                                $url =  site_url('user');
+                                $url =  site_url('siswa/home');
                                 break;
                         endswitch;
                         ?>

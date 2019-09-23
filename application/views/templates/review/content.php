@@ -21,24 +21,29 @@
                                 ?>
                             </div>
                             <div class="row">
-                                <div class="col-6">
-                                    <h5>
-                                        <?php echo strtoupper($header) ?>
-                                        <p class="text-secondary"><small><?php echo $sub_header ?></small></p>
-                                    </h5>
-                                </div>
-                                <div class="col-6">
+                                <div class="col-10">
                                     <div class="row">
-                                        <div class="col-2"></div>
-                                        <div class="col-10">
-                                            <div class="float-right">
-                                                <?php echo (isset($header_button)) ? $header_button : '';  ?>
-                                            </div>
-                                        </div>
+                                        <?php $i = 1;
+                                        foreach ($quests as $key => $quest) : ?>
+                                            <form action="" method="get">
+                                                <input type="hidden" name="id" value="<?= $quest->soal_id ?>">
+                                                <input type="hidden" name="nomor" value="<?= $i ?>">
+                                                <button class="mr-2 mb-2 btn btn-sm btn-primary"><?= $i++; ?></button>
+                                            </form>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="float-right">
+                                        <?php echo (isset($header_button)) ? $header_button : '';  ?>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card">
                         <div class="card-body table-responsive">
                             <!--  -->
                             <?php echo (isset($contents)) ? $contents : '';  ?>
