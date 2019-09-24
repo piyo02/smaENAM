@@ -92,12 +92,17 @@
         <div class="mr-4 row justify-content-end">
             <b>Skor : <?= $jawaban->skor; ?></b>
         </div>
-        <div class="row justify-content-end">
-            <form action="<?= base_url('siswa/tes/update/') ?>" method="">
-                <input type="hidden" name="id" value="<?= $jawaban->id ?>">
-                <input type="text" name="skor" id="skor" class="form-control">
-                <button type="submit" class="btn btn-success mt-2">Ubah Skor</button>
-            </form>
-        </div>
+        <?php if ($options[0]->type == 'esai') : ?>
+            <div class="row justify-content-end">
+                <form action="<?= base_url('guru/hasil_ulangan/update/') ?>" method="post">
+                    <input type="hidden" name="user_id" value="<?= $id; ?>">
+                    <input type="hidden" name="id" value="<?= $this->input->get('id'); ?>">
+                    <input type="hidden" name="nomor" value="<?= $this->input->get('nomor'); ?>">
+                    <input type="hidden" name="jawaban_id" value="<?= $jawaban->id ?>">
+                    <input type="text" name="skor" id="skor" class="form-control">
+                    <button type="submit" class="btn btn-success mt-2">Ubah Skor</button>
+                </form>
+            </div>
+        <?php endif; ?>
     </div>
 </div>

@@ -94,6 +94,7 @@ class M_jawaban_siswa extends MY_Model
     $this->db->select('option');
     $this->db->select('jawaban');
     $this->db->select('uncertain');
+    $this->db->select('skor');
     $this->db->where($data_param);
     return $this->db->get($this->table);
   }

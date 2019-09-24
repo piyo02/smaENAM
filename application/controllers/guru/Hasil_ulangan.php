@@ -19,6 +19,7 @@ class Hasil_ulangan extends Users_Controller
             'm_soal',
             'm_mapel',
             'm_ulangan',
+            'm_jawaban',
             'm_jawaban_siswa',
             'm_hasil_ulangan',
         ));
@@ -159,7 +160,7 @@ class Hasil_ulangan extends Users_Controller
         if (null !== $this->input->get('nomor'))
             $nomor = $this->input->get('nomor');
         $review["nomor"] = $nomor;
-
+        $review['id'] = $id;
 
         //////////////////////////////////////////////////////////////
         $review = $this->load->view('siswa/review/guru', $review, true);
@@ -184,5 +185,55 @@ class Hasil_ulangan extends Users_Controller
         $this->data["header"] = "Siswa ";
         $this->data["sub_header"] = 'Klik Tombol Action Untuk Aksi Lebih Lanjut';
         $this->render("templates/review/content");
+    }
+
+    public function update()
+    {
+        $user_id = $this->input->post('user_id');
+        $id = $this->input->post('id');
+        $nomor = $this->input->post('nomor');
+        $jawaban_id = $this->input->post('jawaban_id');
+        $skor = $this->input->post('skor');
+        $param['id'] = $jawaban_id;
+        $data = [
+            'skor' => $skor
+        ];
+        if ($this->m_jawaban_siswa->update($data, $param)) {
+            $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_jawaban_siswa->messages()));
+            redirect(site_url($this->current_page)  . 'review/' . $user_id . '?id=' . $id . '&nomor=' . $nomor);
+        } else {
+            $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_jawaban_siswa->errors()));
+            redirect(site_url($this->current_page)  . 'review/' . $user_id . '?id=' . $id . '&nomor=' . $nomor);
+        }
+    }
+
+    public function recheck($id)
+    {
+        $param['id'] = $id;
+        $data = $this->m_hasil_ulangan->get_detail_ulangan($param)->row();
+        $skor_max = 100;
+        $ulangan_id = $data->ulangan_id;
+
+        $data_param = [
+            'user_id' => $data->user_id,
+            'ulangan_id' => $ulangan_id,
+        ];
+
+        $answers = $this->m_jawaban_siswa->get_soal_id($data_param)->result();
+        $nilai = 0;
+        foreach ($answers as $key => $answer) {
+            $param = [
+                'soal_id' => $answer->soal_id,
+            ];
+            $nilai_soal = $this->m_soal->get_skor_by_id($param)->row();
+            $nilai += $nilai_soal->skor;
+        }
+        $skor = $this->m_jawaban_siswa->get_skor($data_param)->row();
+
+        $data = [
+            'nilai' => $skor->skor / $nilai * $skor_max
+        ];
+        $this->m_hasil_ulangan->update($data, $data_param);
+        redirect($this->current_page . 'detail/' . $ulangan_id);
     }
 }

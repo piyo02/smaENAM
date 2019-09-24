@@ -138,7 +138,7 @@ class M_ulangan extends MY_Model
 
   public function get_ulangan($data_param, $user_id = null)
   {
-    $this->db->select('tabel_ulangan.id');
+    $this->db->select('DISTINCT(tabel_ulangan.id)');
     $this->db->select('tabel_ulangan.nama');
     $this->db->select('tabel_ulangan.durasi');
     $this->db->select('tabel_ulangan.kkm');

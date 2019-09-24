@@ -164,4 +164,12 @@ class M_soal extends MY_Model
   {
     return $this->db->insert_batch('tabel_jawaban', $data);
   }
+
+  public function get_skor_by_id($param)
+  {
+    $this->db->select('skor');
+    $this->db->where($param);
+    $this->db->where('skor !=', 0);
+    return $this->db->get('tabel_jawaban');
+  }
 }

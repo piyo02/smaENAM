@@ -199,11 +199,19 @@ class Tes extends Siswa_Controller
 		$data = [
 			'user_id' 	 => $this->session->userdata('user_id'),
 			'ulangan_id' => $this->session->userdata('ulangan_id'),
-			'nilai' 	 => $nilai['nilai'],
 		];
+		//hapus data kerja siswa
+		if ($this->m_tes->get_data_tes($data)->row()) {
+			$this->m_tes->delete($data);
+		}
+
+		$data['nilai'] = $nilai['nilai'];
 		$this->m_hasil_ulangan->create($data);
 		$this->data["nilai"] = $nilai;
 		$this->data["ulangan"] = $ulangan;
+
+		//hapus session
+		$this->session->unset_userdata('ulangan_id');
 		$this->render("siswa/tes/confirm");
 	}
 

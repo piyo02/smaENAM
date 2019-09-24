@@ -71,6 +71,13 @@ class Hasil_ulangan_services
         "param" => "id",
       ),
       array(
+        "name" => 'Periksa Ulang',
+        "type" => "link",
+        "url" => site_url($_page . "recheck/"),
+        "button_color" => "success",
+        "param" => "id",
+      ),
+      array(
         "name" => 'X',
         "type" => "modal_delete",
         "modal_id" => "delete_",

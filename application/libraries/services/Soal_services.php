@@ -182,7 +182,7 @@ class Soal_services
 	public function get_form_soal_gambar()
 	{
 		$_data["form_data"] = array(
-			"gambar" => array(
+			"userfiles" => array(
 				'type' => 'file',
 				'label' => "Soal gambar",
 			),

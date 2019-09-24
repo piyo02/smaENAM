@@ -80,7 +80,7 @@
                                             <div class="row justify-content-between">
                                                 <?php if ($rows[$k]->nilai) : ?>
                                                     <button class="btn btn-default"><?= $rows[$k]->nilai; ?></button>
-                                                    <button type="submit" class="btn btn-success">Review</button>
+                                                    <button type='reset' class="btn btn-success">Review</button>
                                                 <?php else : ?>
                                                     <button type="submit" class="btn btn-primary">Kerjakan</button>
                                                 <?php endif; ?>
