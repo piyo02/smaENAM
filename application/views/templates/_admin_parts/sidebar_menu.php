@@ -43,15 +43,14 @@
 
                         if (!empty($data->branch)) {
                             ?>
-                            <li id="<?php echo $data->list_id ?>" class="nav-item has-treeview">
-                                <a href="javascript:void(0);" class="nav-link">
+                            <li class="nav-item has-treeview">
+                                <a id="<?php echo $data->list_id ?>" href="#" class="nav-link">
                                     <i class="fas fa-<?php echo $data->icon ?> nav-icon"></i>
                                     <p>
                                         <?php echo $data->name ?>
                                         <i class="fas fa-angle-left right"></i>
                                         <!-- <span></span> -->
                                     </p>
-
                                 </a>
                                 <ul class="nav nav-treeview ml-4">
                                     <?php
@@ -62,12 +61,13 @@
                         <?php
                                 } else {
                                     ?>
-                            <li id="<?php echo $data->list_id ?>" class="nav-item">
-                                <a href="<?php echo site_url($data->link) ?>" class="nav-link">
+                            <li class="nav-item">
+                                <a id="<?php echo $data->list_id ?>" href="<?php echo site_url($data->link) ?>" class="nav-link">
                                     <i class="fas fa-<?php echo $data->icon ?> nav-icon"></i>
-                                    <p><?php echo $data->name ?></p>
-                                    <div id="<?php echo 'notif_' . $data->list_id ?>">
-                                    </div>
+                                    <p>
+                                        <?php echo $data->name ?>
+                                        <span id="<?php echo 'notif_' . $data->list_id ?>" class="right badge badge-danger"></span>
+                                    </p>
                                 </a>
                             </li>
                 <?php
@@ -96,15 +96,18 @@
 <script type="text/javascript">
     function menuActive(id) {
         id = id.trim();
-        console.log(id);
-        console.log(document.getElementById(id.trim()));
-        // var a =document.getElementById("menu").children[num-1].className="active";
-        var a = document.getElementById(id.trim());
-        console.log(a.parentNode.parentNode);
-        a.parentNode.parentNode.classList.add("active");
-        a.parentNode.style.display = "block";
-        console.log(a.parentNode.parentNode);
-        document.getElementById(id).classList.add("active");
+        // console.log(id);
+        // console.log(a = document.getElementById(id.trim()));
+        a = document.getElementById(id.trim())
+        // // var a =document.getElementById("menu").children[num-1].className="active";
+        // var a = document.getElementById(id.trim());
+        // console.log(a.parentNode.parentNode);
+        a.classList.add("active");
+        b = a.parentNode.parentNode.parentNode;
+        b.classList.add("menu-open");
+        b.children[0].classList.add("active");
+        // console.log( b.children[0] );
+        // document.getElementById(id).classList.add("active");
 
     }
 </script>

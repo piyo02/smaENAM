@@ -400,6 +400,10 @@ class Ion_auth
 		// return $this->ion_auth_model->in_group($admin_group, $id);
 	}
 
+	public function is_teacher($id = FALSE)
+	{
+		return $this->session->userdata('group_id') == 2;
+	}
 	/**
 	 * Check the compatibility with the server
 	 *

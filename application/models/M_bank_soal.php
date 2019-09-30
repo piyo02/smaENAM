@@ -3,12 +3,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_bank_soal extends MY_Model
 {
-  protected $table = "tabel_bank_soal";
+  protected $table = "bank_soal";
 
   function __construct()
   {
     parent::__construct($this->table);
-    parent::set_join_key('group_id');
+    parent::set_join_key('bank_soal_id');
   }
 
   /**
@@ -122,44 +122,34 @@ class M_bank_soal extends MY_Model
   {
     $this->db->select($this->table . '.id');
     $this->db->select($this->table . '.nama');
-    $this->db->select('tabel_mapel.id AS mapel_id');
-    $this->db->select('tabel_mapel.nama AS mapel_name');
-    $this->db->select('tabel_subbab.id AS subbab_id');
-    $this->db->select('tabel_subbab.nama AS subbab_name');
+    $this->db->select($this->table . '.materi');
+    $this->db->select('classes.id AS class_id');
+    $this->db->select('classes.name AS class');
+    $this->db->select('courses.id AS course_id');
+    $this->db->select('courses.name AS course');
     $this->db->select('
                       CASE
-                        WHEN tabel_bank_soal.status > 0 THEN "Berbagi"
+                        WHEN bank_soal.status > 0 THEN "Berbagi"
                         ELSE "Tidak Berbagi"
                       END AS status', FALSE);
     $this->db->join(
-      'tabel_mapel',
-      'tabel_mapel.id = ' . $this->table . '.mapel_id',
+      'classes',
+      'classes.id = ' . $this->table . '.class_id',
       'join'
     );
     $this->db->join(
-      'tabel_subbab',
-      'tabel_subbab.id = ' . $this->table . '.subbab_id',
+      'courses',
+      'courses.id = ' . $this->table . '.course_id',
       'join'
     );
     $this->db->where($this->table . '.user_id', $user_id);
     return $this->db->get($this->table);
   }
 
-  public function get_mapel_subbab($id)
+  public function get_materi($id)
   {
-    $this->db->select('tabel_mapel.nama AS mapel_name');
-    $this->db->select('tabel_subbab.nama AS subbab_name');
-    $this->db->join(
-      'tabel_mapel',
-      'tabel_mapel.id = ' . $this->table . '.mapel_id',
-      'join'
-    );
-    $this->db->join(
-      'tabel_subbab',
-      'tabel_subbab.id = ' . $this->table . '.subbab_id',
-      'join'
-    );
-    $this->db->where($this->table . '.id', $id);
+    $this->db->select('materi');
+    $this->db->where('id', $id);
     return $this->db->get($this->table);
   }
 
@@ -170,12 +160,14 @@ class M_bank_soal extends MY_Model
     return $this->db->get('tabel_referensi_soal');
   }
 
-  public function get_list_mapel_subbab($id)
+  public function list_materi($id)
   {
-    $bank_soal = $this->get_bank_soal($id)->result();
-    foreach ($bank_soal as $key => $value) {
-      $list[] = $this->get_mapel_subbab($value->id)->row();
+    $materi = null;
+    $bank_soal = $this->get_bank_soal($id)->row();
+    $topics = $this->get_materi($bank_soal->id)->result();
+    foreach ($topics as $key => $topic) {
+      $materi = $materi . ' ' . $topic->materi;
     }
-    return $list;
+    return $materi;
   }
 }

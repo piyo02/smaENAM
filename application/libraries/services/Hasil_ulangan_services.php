@@ -21,7 +21,6 @@ class Hasil_ulangan_services
       $this->mapel = '';
     }
     $table["header"] = array(
-      'id' => 'Kode',
       'nama' => 'Nama Ulangan',
       'class' => 'Kelas',
     );
@@ -108,10 +107,10 @@ class Hasil_ulangan_services
     $colum_avg = 'D' . (15 + $qty + 2);
     $table['detail'] = array(
       'nama_sekolah'  => 'NAMA SEKOLAH',
-      'mapel' => 'MATA PELAJARAN',
+      'course_name' => 'MATA PELAJARAN',
       'class'   => 'KELAS',
       'nama'   => 'NAMA ULANGAN',
-      'subbab'   => 'MATERI',
+      'materi'   => 'MATERI',
       'waktu_mulai'   => 'TANGGAL ULANGAN',
       'kkm'   => 'NILAI KETUNTASAN',
       'teacher_name'   => 'GURU',

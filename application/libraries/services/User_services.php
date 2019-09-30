@@ -1,8 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 class User_services
 {
-  // user var
+	// user var
 	protected $id;
 	protected $identity;
 	protected $first_name;
@@ -10,146 +10,159 @@ class User_services
 	protected $phone;
 	protected $address;
 	protected $email;
-  protected $group_id;
-  
-  function __construct()
-  {
-      $this->id		      ='';
-      $this->identity		='';
-      $this->first_name	="";
-      $this->last_name	="";
-      $this->phone		  ="";
-      $this->address		="";
-      $this->email		  ="";
-      $this->group_id		= '';
-  }
+	protected $group_id;
+	protected $nip;
+	protected $edu_ladder_id;
 
-  public function __get($var)
-  {
-    return get_instance()->$var;
-  }
-  
-  public function groups_table_config( $_page, $start_number = 1 )
-  {
-    $table["header"] = array(
+	function __construct()
+	{
+		$this->load->model('m_teacher');
+		$this->id		      = '';
+		$this->identity		= '';
+		$this->first_name	= "";
+		$this->last_name	= "";
+		$this->phone		  = "";
+		$this->address		= "";
+		$this->email		  = "";
+		$this->group_id		= '';
+		$this->group_id		= '';
+	}
+
+	public function __get($var)
+	{
+		return get_instance()->$var;
+	}
+
+	public function groups_table_config($_page, $start_number = 1)
+	{
+		$table["header"] = array(
 			'username' => 'username',
 			'group_name' => 'Group',
 			'user_fullname' => 'Nama Lengkap',
 			'phone' => 'No Telepon',
 			'email' => 'Email',
-		  );
-		  $table["number"] = $start_number ;
-		  $table[ "action" ] = array(
+		);
+		$table["number"] = $start_number;
+		$table["action"] = array(
 			array(
-			  "name" => "Detail",
-			  "type" => "link",
-			  "url" => site_url($_page."detail/"),
-			  "button_color" => "primary",
-			  "param" => "id",
+				"name" => "Detail",
+				"type" => "link",
+				"url" => site_url($_page . "detail/"),
+				"button_color" => "primary",
+				"param" => "id",
 			),
 			array(
-			  "name" => "Edit",
-			  "type" => "link",
-			  "url" => site_url($_page."edit/"),
-			  "button_color" => "primary",
-			  "param" => "id",
+				"name" => "Edit",
+				"type" => "link",
+				"url" => site_url($_page . "edit/"),
+				"button_color" => "primary",
+				"param" => "id",
 			),
 			array(
-			  "name" => 'X',
-			  "type" => "modal_delete",
-			  "modal_id" => "delete_category_",
-			  "url" => site_url( $_page."delete/"),
-			  "button_color" => "danger",
-			  "param" => "id",
-			  "form_data" => array(
-				"id" => array(
-				  'type' => 'hidden',
-				  'label' => "id",
+				"name" => 'X',
+				"type" => "modal_delete",
+				"modal_id" => "delete_category_",
+				"url" => site_url($_page . "delete/"),
+				"button_color" => "danger",
+				"param" => "id",
+				"form_data" => array(
+					"id" => array(
+						'type' => 'hidden',
+						'label' => "id",
+					),
 				),
-			  ),
-			  "title" => "User",
-			  "data_name" => "user_fullname",
+				"title" => "User",
+				"data_name" => "user_fullname",
 			),
 		);
-    return $table;
-  }
-  public function validation_config( ){
-    $config = array(
-        array(
-          'field' => 'name',
-          'label' => 'name',
-          'rules' =>  'trim|required',
-        ),
-        array(
-          'field' => 'link',
-          'label' => 'link',
-          'rules' =>  'trim|required',
-        ),
-        array(
-          'field' => 'icon',
-          'label' => 'icon',
-          'rules' =>  'trim|required',
-        ),
-        array(
-          'field' => 'position',
-          'label' => 'position',
-          'rules' =>  'trim|required',
-        ),
-        array(
-          'field' => 'status',
-          'label' => 'status',
-          'rules' =>  'trim|required',
-        ),
-        array(
-          'field' => 'description',
-          'label' => 'description',
-          'rules' =>  'trim|required',
-        ),
-        array(
-          'field' => 'menu_id',
-          'label' => 'menu_id',
-          'rules' =>  'trim|required',
-        ),
-    );
-    
-    return $config;
-  }
+		return $table;
+	}
+	public function validation_config()
+	{
+		$config = array(
+			array(
+				'field' => 'name',
+				'label' => 'name',
+				'rules' =>  'trim|required',
+			),
+			array(
+				'field' => 'link',
+				'label' => 'link',
+				'rules' =>  'trim|required',
+			),
+			array(
+				'field' => 'icon',
+				'label' => 'icon',
+				'rules' =>  'trim|required',
+			),
+			array(
+				'field' => 'position',
+				'label' => 'position',
+				'rules' =>  'trim|required',
+			),
+			array(
+				'field' => 'status',
+				'label' => 'status',
+				'rules' =>  'trim|required',
+			),
+			array(
+				'field' => 'description',
+				'label' => 'description',
+				'rules' =>  'trim|required',
+			),
+			array(
+				'field' => 'menu_id',
+				'label' => 'menu_id',
+				'rules' =>  'trim|required',
+			),
+		);
 
-  /**
+		return $config;
+	}
+
+	/**
 	 * get_form_data
 	 *
 	 * @return array
 	 * @author madukubah
 	 **/
-	public function get_form_data_readonly( $user_id = -1 )
+	public function get_form_data_readonly($user_id = -1)
 	{
-		if( $user_id != -1 )
-		{
-			$user 				= $this->ion_auth_model->user( $user_id )->row();
-			$this->identity		=$user->username;
-			$this->first_name	=$user->first_name;
-			$this->last_name	=$user->last_name;
-			$this->phone		=$user->phone;
-			$this->id			=$user->user_id;
-			$this->email		=$user->email;
-			$this->group_id		=$user->group_id;
+		if ($user_id != -1) {
+			$user 				= $this->ion_auth_model->user($user_id)->row();
+			$this->identity		= $user->username;
+			$this->first_name	= $user->first_name;
+			$this->last_name	= $user->last_name;
+			$this->phone		= $user->phone;
+			$this->id			= $user->user_id;
+			$this->email		= $user->email;
+			$this->group_id		= $user->group_id;
+			if ($this->ion_auth->is_teacher()) {
+				$edu = $this->m_teacher->get_edu_ladder_teacher($this->session->userdata('user_id'))->row();
+				if (!$edu) {
+					$edu = (object) array(
+						'nip' => '',
+						'name' => '',
+					);
+				}
+				$this->nip			 = $edu->nip;
+				$this->edu_ladder_id = $edu->name;
+			}
 		}
 
-		$groups =$this->ion_auth_model->groups(  )->result();
+		$groups = $this->ion_auth_model->groups()->result();
 
-		$group_options ="";
-		foreach($groups as $n => $item)
-		{	
-			
-			$group_options .= form_radio("group_id", $item->id ,set_checkbox('group_id', $item->id), ' id="basic_checkbox_'.$n.'"');
-			$group_options .= '<label for="basic_checkbox_'.$n.'"> '. $item->name .'</label><br>';
+		$group_options = "";
+		foreach ($groups as $n => $item) {
+
+			$group_options .= form_radio("group_id", $item->id, set_checkbox('group_id', $item->id), ' id="basic_checkbox_' . $n . '"');
+			$group_options .= '<label for="basic_checkbox_' . $n . '"> ' . $item->name . '</label><br>';
 		}
 		$data['groups'] = $group_options;
 		$group_select = array();
-		foreach( $groups as $group )
-		{
+		foreach ($groups as $group) {
 			// if( $group->id == 1 ) continue;
-			$group_select[ $group->id ] = $group->name;
+			$group_select[$group->id] = $group->name;
 		}
 
 		$_data["form_data"] = array(
@@ -157,35 +170,43 @@ class User_services
 				'type' => 'hidden',
 				'label' => "ID",
 				'value' => $this->form_validation->set_value('id', $this->id),
-			  ),
+			),
 			"first_name" => array(
-			  'type' => 'text',
-			  'label' => "Nama Depan",
-			  'value' => $this->form_validation->set_value('first_name', $this->first_name),
+				'type' => 'text',
+				'label' => "Nama Depan",
+				'value' => $this->form_validation->set_value('first_name', $this->first_name),
 			),
 			"last_name" => array(
-			  'type' => 'text',
-			  'label' => "Nama Belakang",
-			  'value' => $this->form_validation->set_value('last_name', $this->last_name),
-			  
+				'type' => 'text',
+				'label' => "Nama Belakang",
+				'value' => $this->form_validation->set_value('last_name', $this->last_name),
+			),
+			"nip" => array(
+				'type' => 'text',
+				'label' => "NIP",
+				'value' => $this->nip,
 			),
 			"email" => array(
-			  'type' => 'text',
-			  'label' => "Email",
-			  'value' => $this->form_validation->set_value('email', $this->email),			  
+				'type' => 'text',
+				'label' => "Email",
+				'value' => $this->form_validation->set_value('email', $this->email),
 			),
 			"phone" => array(
-			  'type' => 'number',
-			  'label' => "Nomor Telepon",
-			  'value' => $this->form_validation->set_value('phone', $this->phone),			  
+				'type' => 'number',
+				'label' => "Nomor Telepon",
+				'value' => $this->form_validation->set_value('phone', $this->phone),
 			),
 			"group_id" => array(
 				'type' => 'text',
 				'label' => "User Group",
-				'value' => $group_select[ $this->group_id ],
+				'value' => $group_select[$this->group_id],
 			),
-		  );
+			"edu_ladder_id" => array(
+				'type' => 'text',
+				'label' => "Jenjang Pendidikan",
+				'value' => $this->edu_ladder_id,
+			),
+		);
 		return $_data;
 	}
 }
-?>

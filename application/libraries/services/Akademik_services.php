@@ -31,14 +31,62 @@ class Akademik_services
     return $table;
   }
 
-  public function bidi_table_config($_page, $start_number = 1)
+  public function course_table_config($_page, $start_number = 1)
   {
     $table["header"] = array(
-      '1' => 'IPA',
-      '2' => 'IPS',
-      '3' => 'BAHASA',
+      'code' => 'Kode',
+      'name' => 'Nama',
+      'course_name' => 'Materi',
+      'description' => 'Deskripsi',
     );
     $table["number"] = $start_number;
+    $table["action"] = array(
+      array(
+        "name" => 'Edit',
+        "type" => "modal_form",
+        "modal_id" => "edit_",
+        "url" => site_url($_page . "edit/"),
+        "button_color" => "primary",
+        "param" => "id",
+        "form_data" => array(
+          "id" => array(
+            'type' => 'hidden',
+            'label' => "id",
+          ),
+          "code" => array(
+            'type' => 'text',
+            'label' => "Kode Kelas",
+            'readonly' => "readonly",
+          ),
+          "name" => array(
+            'type' => 'text',
+            'label' => "Nama Kelas",
+          ),
+          "description" => array(
+            'type' => 'textarea',
+            'label' => "Deskripsi Kelas",
+          ),
+        ),
+        "title" => "Jurnal",
+        "data_name" => "name",
+      ),
+      array(
+        "name" => 'X',
+        "type" => "modal_delete",
+        "modal_id" => "delete_category_",
+        "url" => site_url($_page . "delete/"),
+        "button_color" => "danger",
+        "param" => "id",
+        "form_data" => array(
+          "id" => array(
+            'type' => 'hidden',
+            'label' => "id",
+          ),
+        ),
+        "title" => "User",
+        "data_name" => "name",
+      ),
+    );
     return $table;
   }
 
@@ -47,12 +95,12 @@ class Akademik_services
   {
     $config = array(
       array(
-        'field' => 'nama',
+        'field' => 'name',
         'label' => 'nama',
         'rules' =>  'trim|required',
       ),
       array(
-        'field' => 'deskripsi',
+        'field' => 'description',
         'label' => 'deskripsi',
         'rules' =>  'trim|required',
       ),

@@ -80,7 +80,28 @@ class Soal extends Users_Controller
 
 		$add_menu = $this->load->view('templates/actions/modal_form_get', $add_menu, true);
 
-		$this->data["header_button"] =  $add_menu;
+		//import soal
+		$btn_import = array(
+			"name" => "Import Soal",
+			"modal_id" => "import_soal",
+			"button_color" => "success",
+			"url" => site_url("guru/excel_import/import/"),
+			"form_data" => array(
+				"file" => array(
+					'type' => 'file',
+					'label' => "Pilih File",
+				),
+				"b" => array(
+					'type' => 'hidden',
+					'label' => "Tipe Jawaban",
+					'value' => $bank_soal_id
+				),
+				'data' => NULL
+			),
+		);
+
+		$btn_import = $this->load->view('templates/actions/modal_form_multipart', $btn_import, true);
+		$this->data["header_button"] =  $add_menu . $btn_import;
 
 		//set option
 		$rows = $this->m_bank_soal->bank_soal($this->session->userdata('user_id'))->result();

@@ -103,13 +103,13 @@ class Hasil_ulangan extends Users_Controller
 
     public function export_excel($id)
     {
-        $mapsub = $this->m_bank_soal->get_list_mapel_subbab($id);
+        $course = $this->m_ulangan->get_course($id)->row();
         $detail = $this->m_ulangan->get_task_by_id($id)->row();
+        $materi = $this->m_bank_soal->list_materi($id);
+
+        $detail->materi = $materi;
         $detail->nama_sekolah = 'SMA NEGERI 6 KENDARI';
-        foreach ($mapsub as $key => $value) {
-            $detail->mapel = $value->mapel_name;
-            $detail->subbab = $value->subbab_name;
-        }
+        $detail->course_name = $course->name;
         $_data = [
             'rows' => $this->m_hasil_ulangan->get_hasil_ulangan($id)->result(),
             'headers' => $this->services->header_excel($this->m_hasil_ulangan->get_hasil_ulangan($id)->num_rows()),
@@ -151,6 +151,7 @@ class Hasil_ulangan extends Users_Controller
 
         //jawaban siswa
         $param['ulangan_id'] = $detail->ulangan_id;
+        $param['user_id'] = $detail->user_id;
         $review['jawaban'] = $this->m_jawaban_siswa->get_jawaban_siswa_by_id($param)->row();
         // var_dump($review['jawaban']);
         // die;

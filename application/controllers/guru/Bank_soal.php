@@ -2,6 +2,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 class Bank_soal extends Users_Controller
 {
+    public $teacher = null;
     private $services = null;
     private $name = null;
     private $parent_page = 'guru';
@@ -15,15 +16,21 @@ class Bank_soal extends Users_Controller
         $this->load->model(array(
             'm_bank_soal',
             'm_mapel',
+            'm_class',
+            'm_courses',
             'm_ulangan',
+            'm_teacher',
         ));
+        $this->teacher = $this->m_teacher->get_edu_ladder_teacher($this->session->userdata('user_id'))->row();
     }
     public function index()
     {
         #################################################################3
-        $mapel = $this->m_mapel->get_main_mapel();
+        $classes = $this->m_class->list_classes();
+        $param['edu_ladder_id'] = $this->teacher->edu_ladder_id;
+        $courses = $this->m_courses->list_courses($param);
         $data = '';
-        $table = $this->services->groups_table_config($this->current_page, $data);
+        $table = $this->services->groups_table_config($this->current_page, $data, $param);
         $table["rows"] = $this->m_bank_soal->bank_soal($this->session->userdata('user_id'))->result();
         $table = $this->load->view('templates/tables/plain_table_12', $table, true);
         $this->data["contents"] = $table;
@@ -38,15 +45,22 @@ class Bank_soal extends Users_Controller
                     'label' => "Nama Bank Soal",
                     'value' => "",
                 ),
-                "mapel_id" => array(
+                "class_id" => array(
+                    'type' => 'select',
+                    'label' => "Kelas",
+                    'options' => $classes,
+                    'selected' => ''
+                ),
+                "course_id" => array(
                     'type' => 'select',
                     'label' => "Mata Pelajaran",
-                    'options' => $mapel,
+                    'options' => $courses,
+                    'selected' => ''
                 ),
-                "subbab_id" => array(
-                    'type' => 'select',
-                    'label' => "Materi Bab",
-                    'options' => array(),
+                "materi" => array(
+                    'type' => 'text',
+                    'label' => "Materi",
+                    'value' => ''
                 ),
                 "status" => array(
                     'type' => 'select',
@@ -62,7 +76,9 @@ class Bank_soal extends Users_Controller
 
         $add_menu = $this->load->view('templates/actions/modal_form', $add_menu, true);
 
-        $this->data["header_button"] =  $add_menu;
+        $btn_download = '<a href="' . base_url('assets/file/import.xlsx') . '" class="btn btn-sm btn-success">Download Template Excel</a>';
+
+        $this->data["header_button"] =  $add_menu . $btn_download;
         // return;
         #################################################################3
         $alert = $this->session->flashdata('alert');
@@ -84,11 +100,11 @@ class Bank_soal extends Users_Controller
         $this->form_validation->set_rules($this->services->validation_config());
         if ($this->form_validation->run() === TRUE) {
             $data['user_id'] = $this->session->userdata('user_id');
-            $data['mapel_id'] = $this->input->post('mapel_id');
-            $data['subbab_id'] = $this->input->post('subbab_id');
+            $data['course_id'] = $this->input->post('course_id');
+            $data['class_id'] = $this->input->post('class_id');
+            $data['materi'] = $this->input->post('materi');
             $data['nama'] = $this->input->post('nama');
             $data['status'] = $this->input->post('status');
-            // $data['status'] = $this->input->post('description');
 
             if ($this->m_bank_soal->create($data)) {
                 $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_bank_soal->messages()));
@@ -110,8 +126,9 @@ class Bank_soal extends Users_Controller
         // echo var_dump( $data );return;
         $this->form_validation->set_rules($this->services->validation_config());
         if ($this->form_validation->run() === TRUE) {
-            $data['mapel_id'] = $this->input->post('mapel_id');
-            $data['subbab_id'] = $this->input->post('subbab_id');
+            $data['class_id'] = $this->input->post('class_id');
+            $data['course_id'] = $this->input->post('course_id');
+            $data['materi'] = $this->input->post('materi');
             $data['nama'] = $this->input->post('nama');
             $data['status'] = $this->input->post('status');
 

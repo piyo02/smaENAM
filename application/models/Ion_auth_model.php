@@ -831,7 +831,7 @@ class Ion_auth_model extends MY_Model
 
 		$this->trigger_events('extra_where');
 
-		$query = $this->db->select($this->identity_column . ', email, group_id, id, password, active, last_login, first_name, last_name, image, class_id')
+		$query = $this->db->select($this->identity_column . ', email, group_id, id, password, active, last_login, first_name, last_name, image')
 			->where($this->identity_column, $identity)
 			->limit(1)
 			->order_by('id', 'desc')
@@ -1697,7 +1697,6 @@ class Ion_auth_model extends MY_Model
 			'user_profile_name'    => $user->first_name . " " . $user->last_name,
 			'user_image'    	   => $user->image,
 			'group_id'       	   => $user->group_id,
-			'class_id'			   => $user->class_id
 		];
 
 		$this->session->set_userdata($session_data);

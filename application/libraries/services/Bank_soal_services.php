@@ -3,12 +3,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Bank_soal_services
 {
   public $mapel = '';
-  public $subbab = '';
 
 
   function __construct()
   {
-    $this->load->model('m_mapel');
+    $this->load->model('m_class');
+    $this->load->model('m_courses');
   }
 
   public function __get($var)
@@ -16,28 +16,31 @@ class Bank_soal_services
     return get_instance()->$var;
   }
 
-  public function get_subbab()
-  {
-    return  $this->m_mapel->subbab();
-  }
 
   public function get_mapel()
   {
-    return $this->m_mapel->get_main_mapel();
+    $param['user_id'] = $this->session->userdata('user_id');
+    return $this->m_class->list_classes();
   }
 
-  public function groups_table_config($_page, $data, $start_number = 1)
+  public function get_courses($param)
+  {
+    return $this->m_courses->list_courses($param);
+  }
+
+  public function groups_table_config($_page, $data, $param, $start_number = 1)
   {
     if ($data) {
       $this->mapel = '';
-      $this->mapel = '';
     }
+
     $mapel = $this->get_mapel();
-    $subbab = $this->get_subbab();
+    $courses = $this->get_courses($param);
     $table["header"] = array(
       'nama' => 'Nama Bank Soal',
-      'mapel_name' => 'Mapel',
-      'subbab_name' => 'Materi',
+      'class' => 'Kelas',
+      'course' => 'Mapel',
+      'materi' => 'Materi',
       'status' => 'Deskripsi',
     );
     $table["number"] = $start_number;
@@ -65,15 +68,19 @@ class Bank_soal_services
             'type' => 'text',
             'label' => "Nama Group",
           ),
-          "mapel_id" => array(
+          "class_id" => array(
+            'type' => 'select',
+            'label' => "Kelas",
+            'options' => $courses,
+          ),
+          "course_id" => array(
             'type' => 'select',
             'label' => "Mata Pelajaran",
             'options' => $mapel,
           ),
-          "subbab_id" => array(
-            'type' => 'select',
+          "materi" => array(
+            'type' => 'text',
             'label' => "Materi Bab",
-            'options' => $subbab,
           ),
           "status" => array(
             'type' => 'select',
@@ -115,13 +122,13 @@ class Bank_soal_services
         'rules' =>  'trim|required',
       ),
       array(
-        'field' => 'subbab_id',
+        'field' => 'materi',
         'label' => 'Materi',
         'rules' =>  'trim|required',
       ),
       array(
-        'field' => 'mapel_id',
-        'label' => 'Mata Pelajaran',
+        'field' => 'course_id',
+        'label' => 'Kelas',
         'rules' =>  'trim|required',
       )
     );

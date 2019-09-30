@@ -14,31 +14,32 @@ class Akademik extends Users_Controller
         $this->services = new Akademik_services;
         $this->load->model(array(
             'm_mapel',
+            'm_class',
             'm_group',
+            'm_courses',
         ));
     }
 
-    public function courses($group_id = null)
+    public function class()
     {
-        $group = $this->m_group->group($group_id)->row();
-        $this->data["mapel_tree"] = $this->m_mapel->tree_mapel();;
-        $this->data["mapel_list"] = $this->m_mapel->get_mapel_list();
-        $this->data["group"] = $group;
-        $this->data["contents"] = '';
+        $data_param['user_id'] = $this->session->userdata('user_id');
+        $table = $this->services->course_table_config($this->current_page);
+        $table['rows'] = $this->m_class->get_classes($data_param)->result();
+        $this->data["contents"] = $this->load->view('templates/tables/plain_table_12', $table, true);
         ##################################################################################################################################
         $add_menu = array(
-            "name" => "Tambah Mapel",
+            "name" => "Tambah Kelas",
             "modal_id" => "add_mapel_",
             "button_color" => "primary",
             "url" => site_url($this->current_page . "add/"),
             "form_data" => array(
-                "nama" => array(
+                "name" => array(
                     'type' => 'text',
-                    'label' => "Mata Pelajaran",
+                    'label' => "Nama Kelas",
                 ),
-                "deskripsi" => array(
+                "description" => array(
                     'type' => 'textarea',
-                    'label' => "Deskripsi",
+                    'label' => "Deskripsi Kelas",
                     'value' => "-",
                 ),
             ),
@@ -54,11 +55,11 @@ class Akademik extends Users_Controller
         $this->data["key"] = $this->input->get('key', FALSE);
         $this->data["alert"] = (isset($alert)) ? $alert : NULL;
         $this->data["current_page"] = $this->current_page;
-        $this->data["block_header"] = "Mata Pelajaran";
-        $this->data["header"] = "Daftar Mata Pelajaran";
+        $this->data["block_header"] = "Kelas";
+        $this->data["header"] = "Daftar Kelas";
         $this->data["sub_header"] = 'Klik Tombol Action Untuk Aksi Lebih Lanjut';
 
-        $this->render("guru/akademik/content_courses");
+        $this->render("templates/contents/plain_content");
     }
 
     public function add()
@@ -68,70 +69,46 @@ class Akademik extends Users_Controller
         // echo var_dump( $data );return;
         $this->form_validation->set_rules($this->services->validation_config());
         if ($this->form_validation->run() === TRUE) {
-            $data['nama'] = $this->input->post('nama');
-            $data['deskripsi'] = $this->input->post('deskripsi');
+            $data['code'] = $this->generate_code();
+            $data['name'] = $this->input->post('name');
+            $data['user_id'] = $this->session->userdata('user_id');
+            $data['description'] = $this->input->post('description');
 
-            if ($this->m_mapel->create($data)) {
-                $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_mapel->messages()));
+            if ($this->m_class->create($data)) {
+                $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_class->messages()));
             } else {
-                $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_mapel->errors()));
+                $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_class->errors()));
             }
         } else {
-            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->m_account->errors() ? $this->m_mapel->errors() : $this->session->flashdata('message')));
-            if (validation_errors() || $this->m_mapel->errors()) $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
+            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->m_account->errors() ? $this->m_class->errors() : $this->session->flashdata('message')));
+            if (validation_errors() || $this->m_class->errors()) $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
         }
 
-        redirect(site_url($this->current_page . 'courses'));
-    }
-
-    public function add_subbab()
-    {
-        if (!($_POST)) redirect(site_url($this->current_page));
-        $this->form_validation->set_rules($this->services->validation_config());
-        if ($this->form_validation->run() === TRUE) {
-            $data['nama'] = $this->input->post('nama');
-            $data['deskripsi'] = $this->input->post('deskripsi');
-            $data['mapel_id'] = $this->input->post('mapel_id');
-
-            if ($this->m_mapel->create_subbab($data)) {
-                $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_mapel->messages()));
-            } else {
-                $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_mapel->errors()));
-            }
-        } else {
-            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->m_account->errors() ? $this->m_mapel->errors() : $this->session->flashdata('message')));
-            if (validation_errors() || $this->m_mapel->errors()) $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
-        }
-
-        redirect(site_url($this->current_page . 'courses'));
+        redirect(site_url($this->current_page . 'class'));
     }
 
     public function edit()
     {
         if (!($_POST)) redirect(site_url($this->current_page));
 
-        $mapel_id = $this->input->post('mapel_id');
-        // echo var_dump( $data );return;
         $this->form_validation->set_rules($this->services->validation_config());
         if ($this->form_validation->run() === TRUE) {
-            $tabel = '';
-            if ($mapel_id)
-                $tabel = 'tabel_subbab';
-            $data['nama'] = $this->input->post('nama');
-            $data['deskripsi'] = $this->input->post('deskripsi');
             $data_param['id'] = $this->input->post('id');
 
-            if ($this->m_mapel->update($tabel, $data, $data_param)) {
-                $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_mapel->messages()));
+            $data['name'] = $this->input->post('name');
+            $data['description'] = $this->input->post('description');
+
+            if ($this->m_class->update($data, $data_param)) {
+                $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_class->messages()));
             } else {
-                $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_mapel->errors()));
+                $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_class->errors()));
             }
         } else {
-            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->m_account->errors() ? $this->m_mapel->errors() : $this->session->flashdata('message')));
-            if (validation_errors() || $this->m_mapel->errors()) $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
+            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->m_account->errors() ? $this->m_class->errors() : $this->session->flashdata('message')));
+            if (validation_errors() || $this->m_class->errors()) $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
         }
 
-        redirect(site_url($this->current_page . 'courses/'));
+        redirect(site_url($this->current_page . 'class/'));
     }
 
     public function delete()
@@ -139,16 +116,12 @@ class Akademik extends Users_Controller
         if (!($_POST)) redirect(site_url($this->current_page));
 
         $data_param['id']     = $this->input->post('id');
-        $mapel_id = $this->input->post('mapel_id');
-        $table = '';
-        if ($mapel_id)
-            $table = 'tabel_subbab';
-        if ($this->m_mapel->delete($data_param, $table)) {
-            $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_mapel->messages()));
+        if ($this->m_class->delete($data_param)) {
+            $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_class->messages()));
         } else {
-            $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_mapel->errors()));
+            $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_class->errors()));
         }
-        redirect(site_url($this->current_page . 'courses/'));
+        redirect(site_url($this->current_page . 'class/'));
     }
 
     public function get_subbab()
@@ -158,5 +131,14 @@ class Akademik extends Users_Controller
         if ($mapel_id)
             $dataD = $this->m_mapel->get_subbab($mapel_id)->result();
         echo json_encode($dataD);
+    }
+
+    public function generate_code()
+    {
+        $uniqid = uniqid();
+        $rand_start = rand(1, 5);
+        $code = substr($uniqid, $rand_start, 8);
+
+        return $code;
     }
 }

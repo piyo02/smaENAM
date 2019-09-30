@@ -8,7 +8,7 @@ class M_ulangan extends MY_Model
   function __construct()
   {
     parent::__construct($this->table);
-    parent::set_join_key('group_id');
+    parent::set_join_key('course_id');
   }
 
   /**
@@ -102,12 +102,12 @@ class M_ulangan extends MY_Model
     $this->db->select('tabel_ulangan.durasi');
     $this->db->select('tabel_ulangan.kkm');
     $this->db->select('tabel_ulangan.nilai_maks');
-    $this->db->select('tabel_kelas.id as kelas_id');
-    $this->db->select('tabel_kelas.nama as class');
+    $this->db->select('classes.id as class_id');
+    $this->db->select('classes.name as class');
     $this->db->select("CONCAT((table_users.first_name),(' '),(table_users.last_name)) as teacher_name");
     $this->db->join(
-      'tabel_kelas',
-      'tabel_kelas.id = tabel_ulangan.kelas_id',
+      'classes',
+      'classes.id = tabel_ulangan.class_id',
       'join'
     );
     $this->db->join(
@@ -143,7 +143,7 @@ class M_ulangan extends MY_Model
     $this->db->select('tabel_ulangan.durasi');
     $this->db->select('tabel_ulangan.kkm');
     $this->db->select('tabel_ulangan.nilai_maks');
-    $this->db->select('tabel_kelas.nama AS class');
+    $this->db->select('classes.name AS class');
     if ($user_id) {
       $this->db->select('tabel_hasil_ulangan.nilai');
       $this->db->join(
@@ -155,8 +155,8 @@ class M_ulangan extends MY_Model
       $this->db->or_where('user_id is null');
     }
     $this->db->join(
-      'tabel_kelas',
-      'tabel_kelas.id = tabel_ulangan.kelas_id',
+      'classes',
+      'classes.id = tabel_ulangan.class_id',
       'join'
     );
     $this->db->where($data_param);
@@ -184,5 +184,23 @@ class M_ulangan extends MY_Model
   {
     $this->db->select_max('id');
     return $this->db->get('tabel_ulangan');
+  }
+
+  public function get_course($id)
+  {
+    $this->db->select('classes.name AS class_name');
+    $this->db->select('courses.name AS name');
+    $this->db->join(
+      'tabel_ulangan',
+      'tabel_ulangan.class_id = classes.id',
+      'left'
+    );
+    $this->db->join(
+      'courses',
+      'courses.id = classes.course_id',
+      'left'
+    );
+    $this->db->where('tabel_ulangan.id', $id);
+    return $this->db->get('classes');
   }
 }

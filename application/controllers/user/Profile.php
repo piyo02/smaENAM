@@ -74,6 +74,7 @@ class Profile extends User_Controller
 		}
 
 		if ($this->form_validation->run() === TRUE) {
+			$profile = 1;
 			$data = array(
 				'first_name' => $this->input->post('first_name'),
 				'last_name' => $this->input->post('last_name'),
@@ -83,10 +84,14 @@ class Profile extends User_Controller
 				$data['password'] = $this->input->post('password');
 				$data['old_password'] = $this->input->post('old_password');
 			}
-
+			if ($this->ion_auth->is_teacher()) {
+				$_data['nip'] = $this->input->post('nip');
+				$_data['edu_ladder_id'] = $this->input->post('edu_ladder_id');
+				$profile = $this->m_teacher->update_profile($_data);
+			}
 			$user = $this->ion_auth->user()->row(); //curr user
 			// check to see if we are updating the user
-			if ($this->ion_auth->update($user->id, $data)) {
+			if ($this->ion_auth->update($user->id, $data) && $profile) {
 				// redirect them back to the admin page if admin, or to the base url if non admin
 				$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->ion_auth->messages()));
 				if ($this->input->post('password')) {
@@ -125,6 +130,29 @@ class Profile extends User_Controller
 					'label' => "Konfirmasi Password",
 				),
 			);
+			if ($this->ion_auth->is_teacher()) {
+				$profile = $this->m_teacher->get_edu_ladder_teacher($this->session->userdata('user_id'))->row();
+				if (!$profile) {
+					$profile = (object) array(
+						'nip' => '',
+						'edu_ladder_id' => '',
+					);
+				}
+				$form_teacher['form_data'] = array(
+					"nip" => array(
+						'type' => 'text',
+						'label' => "NIP",
+						'value' => $profile->nip
+					),
+					"edu_ladder_id" => array(
+						'type' => 'select',
+						'label' => "Jenjang Pendidikan",
+						'options' => $this->m_teacher->list_edu_ladder(),
+						'selected' => $profile->edu_ladder_id
+					),
+				);
+				$form_data['form_data'] = array_merge($form_data['form_data'], $form_teacher['form_data']);
+			}
 			$form_data['form_data'] = array_merge($form_data['form_data'], $form_password['form_data']);
 			unset($form_data['form_data']["group_id"]);
 			$form_data = $this->load->view('templates/form/bsb_form', $form_data, TRUE);

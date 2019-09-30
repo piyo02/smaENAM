@@ -56,7 +56,7 @@
                         <div class=" col-md-12 ">
                             <div class="card">
                                 <div class="card-body">
-                                    <img class="img-responsive thumbnail" src="<?php echo base_url('uploads/users_photo/') . $user->image ?>">
+                                    <img class="img-responsive thumbnail" src="<?php echo base_url('uploads/users_photo/') . $user->image ?>" width="300px">
                                 </div>
                             </div>
                         </div>

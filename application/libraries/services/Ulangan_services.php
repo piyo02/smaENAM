@@ -13,7 +13,7 @@ class Ulangan_services
 
   function __construct()
   {
-    $this->load->model('m_kelas');
+    $this->load->model('m_courses');
   }
 
   public function __get($var)
@@ -23,10 +23,11 @@ class Ulangan_services
 
   public function get_class()
   {
-    $classes = $this->m_kelas->get_class()->result();
+    $param['teacher_id'] = $this->session->userdata('user_id');
+    $classes = $this->m_courses->get_courses($param)->result();
     $select[0] = '-- Pilih Kelas -- ';
     foreach ($classes as $key => $class) {
-      $select[$class->id] = $class->nama;
+      $select[$class->id] = $class->name;
     }
     return $select;
   }

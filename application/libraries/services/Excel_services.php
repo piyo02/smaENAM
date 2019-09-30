@@ -43,6 +43,9 @@ class Excel_services
         foreach ($headers['detail'] as $key => $header) {
             $PHPExcel->getActiveSheet()->setCellValue('C' . $column, $header);
             $PHPExcel->getActiveSheet()->setCellValue('D' . $column, ':');
+            if ($key == 'waktu_mulai') {
+                $detail->$key = date('d-m-Y', $detail->$key);
+            }
             $PHPExcel->getActiveSheet()->setCellValue('E' . $column, $detail->$key);
 
             //style keterangan ulangan        
