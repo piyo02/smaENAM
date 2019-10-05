@@ -165,4 +165,20 @@ class M_teacher extends MY_Model
     $this->set_error("gagal");
     return FALSE;
   }
+
+  public function insert_teacher_profile($data)
+  {
+    // Filter the data passed
+    $data = $this->_filter_data('teacher_profile', $data);
+
+    $this->db->insert('teacher_profile', $data);
+    $id = $this->db->insert_id('teacher_profile' . '_id_seq');
+
+    if (isset($id)) {
+      $this->set_message("berhasil");
+      return $id;
+    }
+    $this->set_error("gagal");
+    return FALSE;
+  }
 }

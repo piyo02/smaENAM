@@ -12,11 +12,12 @@ class Courses_services
     return get_instance()->$var;
   }
 
-  public function groups_table_config($_page, $start_number = 1)
+  public function course_admin_table_config($_page, $start_number = 1)
   {
     $table["header"] = array(
-      'name' => 'Nama Group',
+      'name' => 'Mata Pelajaran',
       'description' => 'Deskripsi',
+      'edu_ladder_name' => 'Jenjang',
     );
     $table["number"] = $start_number;
     $table["action"] = array(
@@ -66,6 +67,29 @@ class Courses_services
       array(
         'field' => 'course_id',
         'label' => 'Mata Pelajaran',
+        'rules' =>  'trim|required',
+      ),
+    );
+
+    return $config;
+  }
+
+  public function validation_admin_config()
+  {
+    $config = array(
+      array(
+        'field' => 'edu_ladder_id',
+        'label' => 'Jenjang',
+        'rules' =>  'trim|required',
+      ),
+      array(
+        'field' => 'name',
+        'label' => 'Mata Pelajaran',
+        'rules' =>  'trim|required',
+      ),
+      array(
+        'field' => 'description',
+        'label' => 'Deskripsi',
         'rules' =>  'trim|required',
       ),
     );

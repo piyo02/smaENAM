@@ -122,12 +122,20 @@ class M_courses extends MY_Model
     return TRUE;
   }
 
-  public function get_courses($data_param)
+  public function get_courses($data_param = null)
   {
-    $this->db->select('id');
-    $this->db->select('name');
+    $this->db->select($this->table . '.id');
+    $this->db->select($this->table . '.name');
     $this->db->select('description');
-    $this->db->where($data_param);
+    $this->db->select('edu_ladder.name AS edu_ladder_name');
+    $this->db->join(
+      'edu_ladder',
+      'edu_ladder.id =' . $this->table . '.edu_ladder_id',
+      'join'
+    );
+    if ($data_param)
+      $this->db->where($data_param);
+    $this->db->order_by('edu_ladder.id');
     return $this->db->get($this->table);
   }
 
