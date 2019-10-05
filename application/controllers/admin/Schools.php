@@ -175,13 +175,15 @@ class Schools extends Admin_Controller
 				'phone' => $this->input->post('phone'),
 				'class_id' => 2,
 			);
+			$edu_ladder = $this->input->post('edu_ladder_id');
+			$nip = $this->input->post('nip');
 		}
 		if ($this->form_validation->run() === TRUE && ($user_id =  $this->ion_auth->register($identity, $password, $email, $additional_data, $group_id))) {
 			$data = [
 				'school_id' => $school_id,
 				'user_id' => $user_id,
-				'edu_ladder_id' => $this->input->post('edu_ladder_id'),
-				'nip' => $this->input->post('nip'),
+				'edu_ladder_id' => $edu_ladder,
+				'nip' => $nip,
 			];
 			$this->m_teacher->insert_teacher_profile($data);
 
@@ -220,5 +222,42 @@ class Schools extends Admin_Controller
 
 			$this->render("templates/contents/plain_content_form");
 		}
+	}
+
+	public function edit_teacher()
+	{
+		if (!($_POST)) redirect(site_url($this->current_page));
+
+		// echo var_dump( $data );return;
+		$this->form_validation->set_rules('active', 'Status', 'required');
+		if ($this->form_validation->run() === TRUE) {
+			$data['active'] = $this->input->post('active');
+
+			$data_param['id'] = $this->input->post('id');
+
+			if ($this->m_teacher->update_teacher($data, $data_param)) {
+				$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_school->messages()));
+			} else {
+				$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_school->errors()));
+			}
+		} else {
+			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->m_account->errors() ? $this->m_school->errors() : $this->session->flashdata('message')));
+			if (validation_errors() || $this->m_school->errors()) $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
+		}
+
+		redirect(site_url($this->current_page));
+	}
+
+	public function delete_teacher()
+	{
+		if (!($_POST)) redirect(site_url($this->current_page));
+
+		$data_param['id'] 	= $this->input->post('id');
+		if ($this->m_school->delete_teacher($data_param)) {
+			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_school->messages()));
+		} else {
+			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_school->errors()));
+		}
+		redirect(site_url($this->current_page));
 	}
 }

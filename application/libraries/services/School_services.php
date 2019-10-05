@@ -104,7 +104,7 @@ class School_services
         "name" => 'Edit',
         "type" => "modal_form",
         "modal_id" => "edit_",
-        "url" => site_url($_page . "edit/"),
+        "url" => site_url($_page . "edit_teacher/"),
         "button_color" => "primary",
         "param" => "id",
         "form_data" => array(
@@ -112,13 +112,13 @@ class School_services
             'type' => 'hidden',
             'label' => "id",
           ),
-          "name" => array(
-            'type' => 'text',
-            'label' => "Nama Sekolah",
-          ),
-          "description" => array(
-            'type' => 'textarea',
-            'label' => "Deskripsi",
+          "active" => array(
+            'type' => 'select',
+            'label' => "Status",
+            'options' => array(
+              '0' => 'Tidak Aktif',
+              '1' => 'Aktif'
+            )
           ),
         ),
         "title" => "Jurnal",
@@ -128,7 +128,7 @@ class School_services
         "name" => 'X',
         "type" => "modal_delete",
         "modal_id" => "delete_",
-        "url" => site_url($_page . "delete/"),
+        "url" => site_url($_page . "delete_teacher/"),
         "button_color" => "danger",
         "param" => "id",
         "form_data" => array(

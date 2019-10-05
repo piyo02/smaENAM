@@ -59,6 +59,25 @@ class M_teacher extends MY_Model
     $this->set_message("berhasil");
     return TRUE;
   }
+
+  public function update_teacher($data, $data_param)
+  {
+    $this->db->trans_begin();
+    $data = $this->_filter_data('table_users', $data);
+
+    $this->db->update('table_users', $data, $data_param);
+    if ($this->db->trans_status() === FALSE) {
+      $this->db->trans_rollback();
+
+      $this->set_error("gagal");
+      return FALSE;
+    }
+
+    $this->db->trans_commit();
+
+    $this->set_message("berhasil");
+    return TRUE;
+  }
   /**
    * delete
    *
@@ -78,6 +97,33 @@ class M_teacher extends MY_Model
     $this->db->trans_begin();
 
     $this->db->delete($this->table, $data_param);
+    if ($this->db->trans_status() === FALSE) {
+      $this->db->trans_rollback();
+
+      $this->set_error("gagal"); //('group_delete_unsuccessful');
+      return FALSE;
+    }
+
+    $this->db->trans_commit();
+
+    $this->set_message("berhasil"); //('group_delete_successful');
+    return TRUE;
+  }
+
+  public function delete_teacher($data_param)
+  {
+    //foreign
+    //delete_foreign( $data_param. $models[]  )
+    if (!$this->delete_foreign($data_param)) {
+      $this->set_error("gagal"); //('group_delete_unsuccessful');
+      return FALSE;
+    }
+    //foreign
+    $this->db->trans_begin();
+
+    $param['user_id'] = $data_param['id'];
+    $this->db->delete('teacher_profile', $param);
+    $this->db->delete('table_users', $data_param);
     if ($this->db->trans_status() === FALSE) {
       $this->db->trans_rollback();
 

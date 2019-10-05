@@ -119,6 +119,7 @@ class M_school extends MY_Model
     $this->db->select('table_users.email');
     $this->db->select('CONCAT(table_users.first_name, " ", table_users.last_name) AS full_name');
     $this->db->select('table_users.phone');
+    $this->db->select('table_users.active');
     $this->db->select('
                       CASE
                         WHEN table_users.active = 1 THEN "Aktif"
