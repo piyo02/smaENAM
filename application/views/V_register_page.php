@@ -43,6 +43,15 @@
                         </div>
                     </div>
                 </div>
+                <label for="nomor_telepon">Sekolah: </label>
+                <div class="input-group mb-3">
+                    <?php echo form_dropdown($school_id); ?>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-address-book"></span>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-6">
                         <label for="nomor_telepon">Kelas: </label>

@@ -90,6 +90,7 @@ class Ion_auth
 		$this->load->library('session');
 
 		$this->load->model('ion_auth_model');
+		$this->load->model('m_student_profile');
 
 		$this->_cache_user_in_group = &$this->ion_auth_model->_cache_user_in_group;
 
@@ -236,7 +237,7 @@ class Ion_auth
 	 *                        if the operation failed.
 	 * @author Mathew
 	 */
-	public function register($identity, $password, $email, $additional_data = [], $group_id)
+	public function register($identity, $password, $email, $additional_data = [], $data, $group_id)
 	{
 		$this->ion_auth_model->trigger_events('pre_account_creation');
 
@@ -244,6 +245,8 @@ class Ion_auth
 
 		$id = $this->ion_auth_model->register($identity, $password, $email, $additional_data, $group_id);
 
+		$data['user_id'] = $id;
+		$this->m_student_profile->create($data);
 		if (!$email_activation) {
 			if ($id !== FALSE) {
 				$this->set_message('account_creation_successful');

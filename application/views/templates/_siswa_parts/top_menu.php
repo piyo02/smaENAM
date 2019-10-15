@@ -1,10 +1,10 @@
 <?php if ($this->uri->segment(2) != 'tes') : ?>
     <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-            <a href="<?= base_url('siswa/') ?>home" class="nav-link btn btn-outline-info mr-2">Kelas</a>
+            <a href="<?= base_url('siswa/') ?>classes" class="nav-link btn btn-outline-info ml-2 mr-2">Kelas</a>
         </li>
         <li class="nav-item">
-            <a href="<?= base_url('siswa/') ?>home" class="nav-link btn btn-outline-info mr-2">Dashboard</a>
+            <a href="<?= base_url('siswa/') ?>home" class="nav-link btn btn-outline-info ml-2 mr-2">Dashboard</a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="<?= base_url('siswa/') ?>grafik" class="nav-link btn btn-outline-success">Grafik</a>

@@ -188,7 +188,7 @@ class Schools extends Admin_Controller
 			$this->m_teacher->insert_teacher_profile($data);
 
 			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->ion_auth->messages()));
-			redirect(site_url($this->current_page));
+			redirect(site_url($this->current_page . 'detail/' . $school_id));
 		} else {
 			$param['id'] = $school_id;
 			$school = $this->m_school->school($param)->row();

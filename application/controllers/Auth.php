@@ -16,7 +16,9 @@ class Auth extends Public_Controller
             'language'
         ));
         $this->lang->load('auth');
-        $this->load->model('m_kelas');
+        $this->load->model('m_class');
+        $this->load->model('m_school');
+        $this->load->model('m_student_profile');
     }
 
     public function login()
@@ -73,17 +75,19 @@ class Auth extends Public_Controller
                 'first_name' => $this->input->post('first_name'),
                 'last_name' => $this->input->post('last_name'),
                 'phone' => $this->input->post('phone'),
-                'class_id' => $this->input->post('class_id')
             );
+            $data['school_id'] = $this->input->post('school_id');
+            $data['class_id'] = $this->input->post('class_id');
         }
-        if ($this->form_validation->run() === TRUE && $this->ion_auth->register($identity, $password, $email, $additional_data, 3)) {
+        if ($this->form_validation->run() === TRUE && $this->ion_auth->register($identity, $password, $email, $additional_data, $data, 3)) {
 
             // check to see if we are creating the user
             // redirect them back to the admin page
             $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->ion_auth->messages()));
             redirect("auth/login", 'refresh');
         } else {
-            $select = $this->m_kelas->list_class();
+            $select = $this->m_class->list_classes();
+            $schools = $this->m_school->schools();
             $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
             if (!empty(validation_errors()) || $this->ion_auth->errors())
                 $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->data['message']));
@@ -124,6 +128,15 @@ class Auth extends Public_Controller
                 'class' => 'form-control',
                 'options' => $select,
                 'selected' => $this->form_validation->set_value('class_id')
+            );
+            $this->data['school_id']            = array(
+                'name' => 'school_id',
+                'id' => 'school_id',
+                'type' => 'select',
+                'placeholder' => 'Pilih Kelas',
+                'class' => 'form-control',
+                'options' => $schools,
+                'selected' => $this->form_validation->set_value('school_id')
             );
             $this->data['phone']            = array(
                 'name' => 'phone',

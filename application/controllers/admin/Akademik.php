@@ -1,11 +1,11 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-class Akademik extends Users_Controller
+class Akademik extends Admin_Controller
 {
     private $services = null;
     private $name = null;
-    private $parent_page = 'guru';
-    private $current_page = 'guru/akademik/';
+    private $parent_page = 'admin';
+    private $current_page = 'admin/akademik/';
 
     public function __construct()
     {
@@ -22,9 +22,8 @@ class Akademik extends Users_Controller
 
     public function class()
     {
-        $data_param['user_id'] = $this->session->userdata('user_id');
         $table = $this->services->course_table_config($this->current_page);
-        $table['rows'] = $this->m_class->get_classes($data_param)->result();
+        $table['rows'] = $this->m_class->get_classes()->result();
         $this->data["contents"] = $this->load->view('templates/tables/plain_table_12', $table, true);
         ##################################################################################################################################
         $add_menu = array(
@@ -69,9 +68,7 @@ class Akademik extends Users_Controller
         // echo var_dump( $data );return;
         $this->form_validation->set_rules($this->services->validation_config());
         if ($this->form_validation->run() === TRUE) {
-            $data['code'] = $this->generate_code();
             $data['name'] = $this->input->post('name');
-            $data['user_id'] = $this->session->userdata('user_id');
             $data['description'] = $this->input->post('description');
 
             if ($this->m_class->create($data)) {
@@ -131,14 +128,5 @@ class Akademik extends Users_Controller
         if ($mapel_id)
             $dataD = $this->m_mapel->get_subbab($mapel_id)->result();
         echo json_encode($dataD);
-    }
-
-    public function generate_code()
-    {
-        $uniqid = uniqid();
-        $rand_start = rand(1, 5);
-        $code = substr($uniqid, $rand_start, 8);
-
-        return $code;
     }
 }

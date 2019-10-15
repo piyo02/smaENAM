@@ -203,4 +203,33 @@ class M_ulangan extends MY_Model
     $this->db->where('tabel_ulangan.id', $id);
     return $this->db->get('classes');
   }
+
+  public function get_class_teacher($param)
+  {
+    $this->db->select('class_id AS id');
+    $this->db->select('classes.name');
+    $this->db->select('COUNT(DISTINCT(tabel_hasil_ulangan.user_id)) AS qty');
+    $this->db->join(
+      'classes',
+      'classes.id = tabel_ulangan.class_id',
+      'join'
+    );
+    $this->db->join(
+      'tabel_hasil_ulangan',
+      'tabel_hasil_ulangan.ulangan_id = tabel_ulangan.id',
+      'join'
+    );
+    $this->db->where($param);
+    $this->db->group_by('class_id');
+    return $this->db->get($this->table);
+  }
+  public function list_ulangan_id()
+  {
+    $param['creator_id'] = $this->session->userdata('user_id');
+    $ulangan = $this->get_ulangan($param)->result();
+    foreach ($ulangan as $key => $value) {
+      $id[] = $value->id;
+    }
+    return $id;
+  }
 }

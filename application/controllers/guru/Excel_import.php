@@ -104,7 +104,11 @@ class Excel_import extends Users_Controller
             'jawaban' => $worksheet->getCellByColumnAndRow(3, $row)->getValue(),
             'skor' => $worksheet->getCellByColumnAndRow(4, $row)->getValue(),
         ];
-        return $data;
+        $return = [
+            'option' => $data,
+            'row'    => $row + 1
+        ];
+        return $return;
     }
 
     public function get_option_esai($worksheet, $soal_id, $row)
@@ -116,6 +120,10 @@ class Excel_import extends Users_Controller
             'skor' => $worksheet->getCellByColumnAndRow(4, $row)->getValue(),
         ];
 
-        return $data;
+        $return = [
+            'option' => $data,
+            'row'    => $row + 1
+        ];
+        return $return;
     }
 }

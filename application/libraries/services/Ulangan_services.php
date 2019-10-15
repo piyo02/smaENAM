@@ -23,8 +23,8 @@ class Ulangan_services
 
   public function get_class()
   {
-    $param['teacher_id'] = $this->session->userdata('user_id');
-    $classes = $this->m_courses->get_courses($param)->result();
+    $param['user_id'] = $this->session->userdata('user_id');
+    $classes = $this->m_courses->get_teacher_course($param)->result();
     $select[0] = '-- Pilih Kelas -- ';
     foreach ($classes as $key => $class) {
       $select[$class->id] = $class->name;

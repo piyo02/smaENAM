@@ -1,15 +1,14 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class M_class extends MY_Model
+class M_student_profile extends MY_Model
 {
-  protected $table = "classes";
-  protected $mapel_list = array();
+  protected $table = "student_profile";
 
   function __construct()
   {
     parent::__construct($this->table);
-    parent::set_join_key('classes_id');
+    parent::set_join_key('class_id');
   }
 
   /**
@@ -17,7 +16,7 @@ class M_class extends MY_Model
    *
    * @param array  $data
    * @return static
-   * @author kz
+   * @author madukubah
    */
   public function create($data)
   {
@@ -28,37 +27,36 @@ class M_class extends MY_Model
     $id = $this->db->insert_id($this->table . '_id_seq');
 
     if (isset($id)) {
-      $this->set_message("Kelas berhasil dibuat");
+      $this->set_message("berhasil");
       return $id;
     }
-    $this->set_error("Kelas gagal dibuat");
+    $this->set_error("gagal");
     return FALSE;
   }
-
-
   /**
    * update
    *
    * @param array  $data
    * @param array  $data_param
    * @return bool
-   * @author kz
+   * @author madukubah
    */
   public function update($data, $data_param)
   {
     $this->db->trans_begin();
     $data = $this->_filter_data($this->table, $data);
+
     $this->db->update($this->table, $data, $data_param);
     if ($this->db->trans_status() === FALSE) {
       $this->db->trans_rollback();
 
-      $this->set_error("Kelas gagal di Edit");
+      $this->set_error("gagal");
       return FALSE;
     }
 
     $this->db->trans_commit();
 
-    $this->set_message("Kelas berhasil di edit");
+    $this->set_message("berhasil");
     return TRUE;
   }
   /**
@@ -66,48 +64,51 @@ class M_class extends MY_Model
    *
    * @param array  $data_param
    * @return bool
-   * @author kz
+   * @author madukubah
    */
   public function delete($data_param)
   {
     //foreign
     //delete_foreign( $data_param. $models[]  )
-    if (!$this->delete_foreign($data_param, ['m_ulangan'])) {
-      $this->set_error("gagal"); //('menu_delete_unsuccessful');
+    if (!$this->delete_foreign($data_param)) {
+      $this->set_error("gagal"); //('group_delete_unsuccessful');
       return FALSE;
     }
     //foreign
     $this->db->trans_begin();
+
     $this->db->delete($this->table, $data_param);
     if ($this->db->trans_status() === FALSE) {
       $this->db->trans_rollback();
 
-      $this->set_error("gagal"); //('menu_delete_unsuccessful');
+      $this->set_error("gagal"); //('group_delete_unsuccessful');
       return FALSE;
     }
 
     $this->db->trans_commit();
 
-    $this->set_message("berhasil"); //('menu_delete_successful');
+    $this->set_message("berhasil"); //('group_delete_successful');
     return TRUE;
   }
 
-  public function get_classes()
+  public function get_student_class($param)
   {
-    $this->db->select('classes.id');
-    $this->db->select('classes.name');
-    $this->db->select('classes.description');
+    $this->db->select('id');
+    $this->db->select('school_id');
+    $this->db->select('school.name AS school_name');
+    $this->db->select('class_id');
+    $this->db->select('classes.name AS class_name');
+    $this->db->join(
+      'classes',
+      'classes.id = student_profile.class_id',
+      'join'
+    );
+    $this->db->join(
+      'school',
+      'school.id = student_profile.school_id',
+      'join'
+    );
+    $this->db->where($param);
     return $this->db->get($this->table);
-  }
-
-  public function list_classes()
-  {
-    $param['user_id'] = $this->session->userdata('user_id');
-    $classes = $this->get_classes()->result();
-    $list[''] = '-- Pilih Kelas --';
-    foreach ($classes as $key => $course) {
-      $list[$course->id] = $course->name;
-    }
-    return $list;
   }
 }

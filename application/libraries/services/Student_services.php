@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-class Akademik_services
+class Student_services
 {
 
 
@@ -15,26 +15,7 @@ class Akademik_services
   public function groups_table_config($_page, $start_number = 1)
   {
     $table["header"] = array(
-      'name' => 'Nama Group',
-      'description' => 'Deskripsi',
-    );
-    $table["number"] = $start_number;
-    $table["action"] = array(
-      array(
-        "name" => "Detail",
-        "type" => "link",
-        "url" => site_url($_page . "group/"),
-        "button_color" => "primary",
-        "param" => "id",
-      ),
-    );
-    return $table;
-  }
-
-  public function course_table_config($_page, $start_number = 1)
-  {
-    $table["header"] = array(
-      'name' => 'Nama',
+      'name' => 'Nama Kelas',
       'description' => 'Deskripsi',
     );
     $table["number"] = $start_number;
@@ -53,11 +34,11 @@ class Akademik_services
           ),
           "name" => array(
             'type' => 'text',
-            'label' => "Nama Kelas",
+            'label' => "Nama Group",
           ),
           "description" => array(
             'type' => 'textarea',
-            'label' => "Deskripsi Kelas",
+            'label' => "Deskripsi",
           ),
         ),
         "title" => "Jurnal",
@@ -66,7 +47,7 @@ class Akademik_services
       array(
         "name" => 'X',
         "type" => "modal_delete",
-        "modal_id" => "delete_category_",
+        "modal_id" => "delete_",
         "url" => site_url($_page . "delete/"),
         "button_color" => "danger",
         "param" => "id",
@@ -76,25 +57,23 @@ class Akademik_services
             'label' => "id",
           ),
         ),
-        "title" => "User",
+        "title" => "Jurnal",
         "data_name" => "name",
       ),
     );
     return $table;
   }
-
-
   public function validation_config()
   {
     $config = array(
       array(
         'field' => 'name',
-        'label' => 'nama',
+        'label' => 'name',
         'rules' =>  'trim|required',
       ),
       array(
         'field' => 'description',
-        'label' => 'deskripsi',
+        'label' => 'description',
         'rules' =>  'trim|required',
       ),
     );
