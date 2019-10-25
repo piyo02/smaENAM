@@ -124,22 +124,22 @@ class School_services
         "title" => "Jurnal",
         "data_name" => "name",
       ),
-      // array(
-      //   "name" => 'X',
-      //   "type" => "modal_delete",
-      //   "modal_id" => "delete_",
-      //   "url" => site_url($_page . "delete_teacher/"),
-      //   "button_color" => "danger",
-      //   "param" => "id",
-      //   "form_data" => array(
-      //     "id" => array(
-      //       'type' => 'hidden',
-      //       'label' => "id",
-      //     ),
-      //   ),
-      //   "title" => "Jurnal",
-      //   "data_name" => "name",
-      // ),
+      array(
+        "name" => 'X',
+        "type" => "modal_delete",
+        "modal_id" => "delete_",
+        "url" => site_url($_page . "delete_teacher/"),
+        "button_color" => "danger",
+        "param" => "id",
+        "form_data" => array(
+          "id" => array(
+            'type' => 'hidden',
+            'label' => "id",
+          ),
+        ),
+        "title" => "Jurnal",
+        "data_name" => "full_name",
+      ),
     );
     return $table;
   }

@@ -1600,6 +1600,14 @@ class Ion_auth_model extends MY_Model
 	 */
 	public function delete_user($id)
 	{
+		$this->set_join_key('user_id');
+		$data_param['id'] = $id;
+		//delete_foreign( $data_param. $models[]  )
+		if (!$this->delete_foreign($data_param, ['M_teacher_profile', 'M_bank_soal', 'M_ulangan', 'M_teacher', 'm_student_profile', 'm_hasil_ulangan', 'm_jawaban_siswa', 'm_kerja'])) {
+			$this->set_error("gagal"); //('group_delete_unsuccessful');
+			return FALSE;
+		}
+
 		$this->trigger_events('pre_delete_user');
 
 		$this->db->trans_begin();
@@ -1698,6 +1706,24 @@ class Ion_auth_model extends MY_Model
 			'user_image'    	   => $user->image,
 			'group_id'       	   => $user->group_id,
 		];
+
+		switch ($user->group_id) {
+			case 2:
+				$query = "SELECT school_id, edu_ladder_id, nip FROM teacher_profile WHERE user_id = $user->id";
+				$teacher_profile = $this->db->query($query)->row();
+
+				$session_data['school_id'] = $teacher_profile->school_id;
+				$session_data['edu_ladder_id'] = $teacher_profile->edu_ladder_id;
+				$session_data['nip'] = $teacher_profile->nip;
+				break;
+			case 3:
+				$query = "SELECT school_id, class_id FROM student_profile WHERE user_id = $user->id";
+				$student_profile = $this->db->query($query)->row();
+
+				$session_data['school_id'] = $student_profile->school_id;
+				$session_data['class_id'] = $student_profile->class_id;
+				break;
+		}
 
 		$this->session->set_userdata($session_data);
 

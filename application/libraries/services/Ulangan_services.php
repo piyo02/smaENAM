@@ -4,7 +4,8 @@ class Ulangan_services
 {
   public $r          = '';
   public $nama       = '';
-  public $kelas_id   = '';
+  public $class_id   = '';
+  public $course_id   = '';
   public $waktu_mulai = '';
   public $durasi     = '';
   public $kkm        = '';
@@ -13,7 +14,10 @@ class Ulangan_services
 
   function __construct()
   {
-    $this->load->model('m_courses');
+    $this->load->model(array(
+      'm_class',
+      'm_courses',
+    ));
   }
 
   public function __get($var)
@@ -21,16 +25,6 @@ class Ulangan_services
     return get_instance()->$var;
   }
 
-  public function get_class()
-  {
-    $param['user_id'] = $this->session->userdata('user_id');
-    $classes = $this->m_courses->get_teacher_course($param)->result();
-    $select[0] = '-- Pilih Kelas -- ';
-    foreach ($classes as $key => $class) {
-      $select[$class->id] = $class->name;
-    }
-    return $select;
-  }
 
   public function groups_table_config($_page, $start_number = 1)
   {
@@ -97,7 +91,7 @@ class Ulangan_services
         'rules' =>  'trim|required',
       ),
       array(
-        'field' => 'kelas_id',
+        'field' => 'class_id',
         'label' => 'Pilih Kelas',
         'rules' =>  'trim|required',
       ),
@@ -126,13 +120,18 @@ class Ulangan_services
     if ($data) {
       $this->r          = '';
       $this->nama       = $data->nama;
-      $this->kelas_id   = $data->kelas_id;
+      $this->class_id   = $data->class_id;
+      $this->course_id   = $data->course_id;
       $this->waktu_mulai = $data->waktu_mulai;
       $this->durasi     = $data->durasi;
       $this->kkm        = $data->kkm;
       $this->nilai_maks = $data->nilai_maks;
     }
-    $select = $this->get_class();
+    $param['edu_ladder_id'] = $this->session->userdata('edu_ladder_id');
+    $list_classes = $this->m_class->list_classes($param);
+
+    $data_param['teacher_course.user_id'] = $this->session->userdata('user_id');
+    $list_courses = $this->m_courses->list_teacher_course($data_param);
     $_data["form_data"] = array(
       "r" => array(
         'type' => 'hidden',
@@ -144,11 +143,17 @@ class Ulangan_services
         'label' => "Nama Ulangan",
         'value' => $this->nama,
       ),
-      "kelas_id" => array(
+      "class_id" => array(
         'type' => 'select',
         'label' => "Pilih Kelas",
-        'options' => $select,
-        'selected' => $this->kelas_id,
+        'options' => $list_classes,
+        'selected' => $this->class_id,
+      ),
+      "course_id" => array(
+        'type' => 'select',
+        'label' => "Pilih Mata Pelajaran",
+        'options' => $list_courses,
+        'selected' => $this->course_id,
       ),
       "waktu_mulai" => array(
         'type' => 'date_range',
@@ -183,7 +188,7 @@ class Ulangan_services
         'readonly' => 'readonly',
         'value' => $data->nama
       ),
-      "kelas_id" => array(
+      "class_id" => array(
         'type' => 'text',
         'label' => "Kelas",
         'readonly' => 'readonly',
@@ -193,7 +198,7 @@ class Ulangan_services
         'type' => 'text',
         'label' => "Tanggal Ulangan",
         'readonly' => 'readonly',
-        'value' => $data->waktu_mulai,
+        'value' => date('d-m-Y', $data->waktu_mulai),
       ),
       "durasi" => array(
         'type' => 'number',

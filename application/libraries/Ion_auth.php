@@ -237,7 +237,7 @@ class Ion_auth
 	 *                        if the operation failed.
 	 * @author Mathew
 	 */
-	public function register($identity, $password, $email, $additional_data = [], $data, $group_id)
+	public function register($identity, $password, $email, $additional_data = [], $group_id, $data = null)
 	{
 		$this->ion_auth_model->trigger_events('pre_account_creation');
 
@@ -245,8 +245,10 @@ class Ion_auth
 
 		$id = $this->ion_auth_model->register($identity, $password, $email, $additional_data, $group_id);
 
-		$data['user_id'] = $id;
-		$this->m_student_profile->create($data);
+		if ($data) {
+			$data['user_id'] = $id;
+			$this->m_student_profile->create($data);
+		}
 		if (!$email_activation) {
 			if ($id !== FALSE) {
 				$this->set_message('account_creation_successful');
@@ -406,6 +408,11 @@ class Ion_auth
 	public function is_teacher($id = FALSE)
 	{
 		return $this->session->userdata('group_id') == 2;
+	}
+
+	public function is_uadmin($id = FALSE)
+	{
+		return $this->session->userdata('group_id') == 4;
 	}
 	/**
 	 * Check the compatibility with the server

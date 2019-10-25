@@ -70,7 +70,7 @@ class M_bank_soal extends MY_Model
   {
     //foreign
     //delete_foreign( $data_param. $models[]  )
-    if (!$this->delete_foreign($data_param)) {
+    if (!$this->delete_foreign($data_param, ['M_soal', 'M_referensi'])) {
       $this->set_error("Bank soal gagal di hapus"); //('group_delete_unsuccessful');
       return FALSE;
     }
@@ -91,26 +91,6 @@ class M_bank_soal extends MY_Model
     return TRUE;
   }
 
-  /**
-   * group
-   *
-   * @param int|array|null $id = id_groups
-   * @return static
-   * @author madukubah
-   */
-  public function group($id = NULL)
-  {
-    if (isset($id)) {
-      $this->where($this->table . '.id', $id);
-    }
-
-    $this->limit(1);
-    $this->order_by($this->table . '.id', 'desc');
-
-    $this->groups();
-
-    return $this;
-  }
   /**
    * groups
    *
@@ -153,6 +133,7 @@ class M_bank_soal extends MY_Model
     return $this->db->get($this->table);
   }
 
+  //pindah
   public function get_bank_soal($id)
   {
     $this->db->select('bank_soal_id as id');

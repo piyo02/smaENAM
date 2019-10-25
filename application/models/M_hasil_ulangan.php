@@ -48,6 +48,7 @@ class M_hasil_ulangan extends MY_Model
     return TRUE;
   }
 
+  //pindah
   public function get_kkm($id)
   {
     $this->db->select('kkm');

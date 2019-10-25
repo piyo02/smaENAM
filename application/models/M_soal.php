@@ -8,7 +8,7 @@ class M_soal extends MY_Model
   function __construct()
   {
     parent::__construct($this->table);
-    parent::set_join_key('group_id');
+    parent::set_join_key('soal_id');
   }
 
   /**
@@ -71,11 +71,11 @@ class M_soal extends MY_Model
   public function delete($data_param)
   {
 
-    $this->db->where('soal_id', $data_param);
-    if (!$this->db->delete('tabel_jawaban'))
+
+    if (!$this->delete_foreign($data_param, ['M_jawaban', 'M_jawaban_siswa']))
       return false;
 
-    $this->db->where('id', $data_param);
+    $this->db->where($data_param);
     if (!$this->db->delete($this->table))
       return false;
 
@@ -126,6 +126,7 @@ class M_soal extends MY_Model
     return $this->db->get($this->table);
   }
 
+  //pindah
   public function get_option_by_id($data_param)
   {
     $this->db->select('id');
@@ -140,7 +141,7 @@ class M_soal extends MY_Model
   {
     $this->db->select('kode');
     $this->db->where('id = (SELECT MAX(id) FROM tabel_soal WHERE bank_soal_id = ' . $data_param . ')');
-    return $this->db->get('tabel_soal');
+    return $this->db->get($this->table);
   }
 
 
@@ -160,16 +161,20 @@ class M_soal extends MY_Model
     return FALSE;
   }
 
-  public function insert_option($data)
+  public function get_num_type($id, $type1, $type2 = null)
   {
-    return $this->db->insert_batch('tabel_jawaban', $data);
-  }
-
-  public function get_skor_by_id($param)
-  {
-    $this->db->select('skor');
-    $this->db->where($param);
-    $this->db->where('skor !=', 0);
-    return $this->db->get('tabel_jawaban');
+    $this->db->select('DISTINCT(tabel_soal.id)');
+    $this->db->select('tabel_jawaban.type');
+    $this->db->join(
+      'tabel_jawaban',
+      'tabel_jawaban.soal_id = tabel_soal.id',
+      'join'
+    );
+    $this->db->where('tabel_soal.bank_soal_id', $id);
+    if ($type2 == null)
+      $this->db->where('tabel_jawaban.type', $type1);
+    else
+      $this->db->where('(tabel_jawaban.type = "' . $type1 . '" OR tabel_jawaban.type = "' . $type2 . '")');
+    return $this->db->get($this->table);
   }
 }

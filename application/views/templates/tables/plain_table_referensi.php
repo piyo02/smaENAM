@@ -79,7 +79,7 @@ foreach ($bank_soal as $key => $value) {
                 console.log(bank_soal_id);
                 $.ajax({
                     type: 'POST', //method
-                    url: '<?= base_url('guru/bank_soal/count_type') ?>', //action
+                    url: '<?= base_url('guru/soal/count_type') ?>', //action
                     data: {
                         id: bank_soal_id
                     }, //data yang dikrim ke action $_POST['id']

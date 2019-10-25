@@ -9,7 +9,7 @@ class M_courses extends MY_Model
   function __construct()
   {
     parent::__construct($this->table);
-    parent::set_join_key('courses_id');
+    parent::set_join_key('course_id');
   }
 
   /**
@@ -85,7 +85,7 @@ class M_courses extends MY_Model
   {
     //foreign
     //delete_foreign( $data_param. $models[]  )
-    if (!$this->delete_foreign($data_param, ['m_ulangan'])) {
+    if (!$this->delete_foreign($data_param, ['m_ulangan', 'm_teacher', 'm_bank_soal'])) {
       $this->set_error("gagal"); //('menu_delete_unsuccessful');
       return FALSE;
     }
@@ -149,9 +149,20 @@ class M_courses extends MY_Model
     return $list;
   }
 
-  public function get_teacher_course($param)
+  public function list_teacher_course($param = null)
   {
-    $this->db->select('teacher_course.id');
+    $courses = $this->get_teacher_course($param)->result();
+    $list[''] = '-- Pilih Mata Pelajaran --';
+    foreach ($courses as $key => $course) {
+      $list[$course->id] = $course->name;
+    }
+    return $list;
+  }
+
+  public function get_teacher_course($param = null)
+  {
+    $this->db->select('teacher_course.id AS teacher_course_id');
+    $this->db->select($this->table . '.id');
     $this->db->select('name');
     $this->db->select('description');
     $this->db->join(
@@ -159,7 +170,8 @@ class M_courses extends MY_Model
       'teacher_course.course_id = courses.id',
       'join'
     );
-    $this->db->where($param);
+    if ($param)
+      $this->db->where($param);
     return $this->db->get($this->table);
   }
 }

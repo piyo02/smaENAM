@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/') ?>plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
+    <script src="<?= base_url('assets/') ?>plugins/ckeditor/ckeditor.js"></script>
     <script src="<?= base_url('assets/') ?>plugins/jquery/jquery.min.js"></script>
 </head>
 

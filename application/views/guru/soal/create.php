@@ -41,7 +41,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-7">
+                                <div class="col-12">
 
                                     <form action="" method="post" enctype="multipart/form-data">
                                         <?php echo (isset($contents)) ? $contents : '';  ?>
@@ -51,11 +51,6 @@
                                         </button>
 
                                         <?php echo form_close()  ?>
-                                </div>
-                                <div class="col-1"></div>
-                                <div class="col-4">
-                                    <h5 class="mt-4">Contoh tampilan</h5>
-                                    <img src="<?= base_url('assets/img/') ?>contoh-tampilan.png">
                                 </div>
                             </div>
                             <!--  -->

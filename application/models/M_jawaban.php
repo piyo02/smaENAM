@@ -8,7 +8,7 @@ class M_jawaban extends MY_Model
   function __construct()
   {
     parent::__construct($this->table);
-    parent::set_join_key('group_id');
+    // parent::set_join_key('group_id');
   }
 
   /**
@@ -20,7 +20,7 @@ class M_jawaban extends MY_Model
    */
   public function create($data)
   {
-    $this->db->insert($this->table, $data);
+    $this->db->insert_batch($this->table, $data);
   }
   /**
    * update
@@ -126,5 +126,66 @@ class M_jawaban extends MY_Model
     $this->db->select('jawaban');
     $this->db->where($data_param);
     return $this->db->get($this->table);
+  }
+
+  public function get_skor_by_id($param)
+  {
+    $this->db->select('skor');
+    $this->db->where($param);
+    $this->db->where('skor !=', 0);
+    return $this->db->get($this->table);
+  }
+
+  public function get_option_by_id($data_param)
+  {
+    $this->db->select('id');
+    $this->db->select('type');
+    $this->db->select('jawaban');
+    $this->db->select('skor');
+    $this->db->where($data_param);
+    return $this->db->get($this->table);
+  }
+
+  public function get_soal_id_pg($data_param, $limit)
+  {
+    $this->db->select('DISTINCT(tabel_soal.id)');
+    $this->db->join(
+      'tabel_soal',
+      'tabel_soal.id = tabel_jawaban.soal_id',
+      'join'
+    );
+    $this->db->where($data_param);
+    $this->db->where('(`tabel_jawaban`.`type` = "teks" OR `tabel_jawaban`.`type` = "gambar")');
+    $this->db->order_by('id', 'RANDOM');
+    return $this->db->get($this->table, $limit);
+  }
+
+  public function get_soal_id_isian($data_param, $limit)
+  {
+    $this->db->select('DISTINCT(tabel_soal.id)');
+    $this->db->join(
+      'tabel_soal',
+      'tabel_soal.id = tabel_jawaban.soal_id',
+      'join'
+    );
+    $this->db->where($data_param);
+    $this->db->where('tabel_jawaban.type', 'isian');
+    $this->db->order_by('id', 'RANDOM');
+    return $this->db->get($this->table, $limit);
+  }
+
+
+  public function get_soal_id_esai($data_param, $limit)
+  {
+    $this->db->select('DISTINCT(tabel_soal.id)');
+    $this->db->join(
+      'tabel_soal',
+      'tabel_soal.id = tabel_jawaban.soal_id',
+      'join'
+    );
+    $this->db->where($data_param);
+    $this->db->where('tabel_jawaban.type', 'esai');
+    $this->db->order_by('id', 'RANDOM');
+    return $this->db->get($this->table, $limit);
   }
 }

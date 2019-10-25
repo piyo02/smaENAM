@@ -16,7 +16,7 @@ class User_services
 
 	function __construct()
 	{
-		$this->load->model('m_teacher');
+		$this->load->model('m_teacher_profile');
 		$this->id		      = '';
 		$this->identity		= '';
 		$this->first_name	= "";
@@ -138,7 +138,8 @@ class User_services
 			$this->email		= $user->email;
 			$this->group_id		= $user->group_id;
 			if ($this->ion_auth->is_teacher()) {
-				$edu = $this->m_teacher->get_edu_ladder_teacher($this->session->userdata('user_id'))->row();
+				$data_param['user_id'] = $this->session->userdata('user_id');
+				$edu = $this->m_teacher_profile->get_profile($data_param)->row();
 				if (!$edu) {
 					$edu = (object) array(
 						'nip' => '',

@@ -8,7 +8,7 @@ class M_jawaban_siswa extends MY_Model
   function __construct()
   {
     parent::__construct($this->table);
-    parent::set_join_key('group_id');
+    // parent::set_join_key('group_id');
   }
 
   /**

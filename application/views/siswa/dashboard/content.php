@@ -46,68 +46,52 @@
         <div class="row mb-2 mt-4 justify-content-center">
             <h4 class="m-0 text-dark">Daftar Ulangan</h4>
         </div>
-    </div>
-    <div id="carouselExampleIndicators" class="carousel slide m-5" data-ride="carousel">
-        <div class="carousel-inner">
+        <div class="row  justify-content-center">
+            <div class="col-12 row  justify-content-center">
+                <div class="col-4">
+                    <?php
+                    echo $alert;
+                    ?>
+                </div>
+            </div>
             <?php
-            $k = 0;
-            for ($i = 0; $i < ceil(count($rows) / 2); $i++) : ?>
-                <?php if ($i == 0) : ?>
-                    <div class="carousel-item active">
-                    <?php else : ?>
-                        <div class="carousel-item">
-                        <?php endif; ?>
-                        <?php
-                            echo '<div class="row">';
-                            echo '<div class="col-2"></div>';
-                            for ($j = 0; $j < 2; $j++) { ?>
-                            <div class="col-4">
-                                <form action="<?= base_url('siswa/tes') ?>" method="post">
-                                    <input type="hidden" name="id" value="<?= $rows[$k]->id ?>">
-                                    <div class="card card-outline card-success">
-                                        <div class="card-header row justify-content-center">
-                                            <h3 class="card-title"><?= $rows[$k]->nama; ?></h3>
-                                        </div>
-                                        <div class="card-body bg-gray-light">
-                                            <div class="row">
-                                                <div class="col-9">
-                                                    <?= $rows[$k]->class; ?>
-                                                </div>
-                                                <div class="col-3 row justify-content-end">
-                                                    <p><?= $rows[$k]->durasi; ?> menit</p>
-                                                </div>
-                                            </div>
-                                            <div class="row justify-content-between">
-                                                <?php if ($rows[$k]->nilai) : ?>
-                                                    <button class="btn btn-default"><?= $rows[$k]->nilai; ?></button>
-                                                    <button type='reset' class="btn btn-success">Review</button>
-                                                <?php else : ?>
-                                                    <button type="submit" class="btn btn-primary">Kerjakan</button>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
-                                </form>
+            for ($i = 0; $i < count($rows); $i++) : ?>
+                <div class="col-3 ml-2">
+                    <form action="<?= base_url('siswa/tes') ?>" method="post">
+                        <input type="hidden" name="id" value="<?= $rows[$i]->id ?>">
+                        <div class="card card-outline card-success">
+                            <div class="card-header row justify-content-center">
+                                <h3 class="card-title"><?= $rows[$i]->nama; ?></h3>
                             </div>
-                        <?php
-                                echo '</div>';
-                                $k++;
-                                if (!isset($rows[$k]))
-                                    break;
-                            }
-                            ?>
+                            <div class="card-body bg-gray-light">
+                                <div class="row">
+                                    <div class="col-9">
+                                        <?= $rows[$i]->class; ?>
+                                    </div>
+                                    <div class="col-3 row justify-content-end">
+                                        <p><?= $rows[$i]->durasi; ?> menit</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    Jumlah Soal : <?= $rows[$i]->qty; ?> nomor
+                                </div>
+                                <div class="row justify-content-between">
+                                    <?php if ($rows[$i]->nilai) : ?>
+                                        <button class="btn btn-default"><?= $rows[$i]->nilai; ?></button>
+                                        <button type='reset' class="btn btn-success">Review</button>
+                                    <?php else : ?>
+                                        <button type="submit" class="btn btn-primary">Kerjakan</button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                <?php endfor; ?>
+                    </form>
+                </div>
+            <?php endfor; ?>
         </div>
-        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
     </div>
+</div>
+</div>
 </div>
 <div class="wrapper bg-white">
     <div class="content-wrapper" style="margin-bottom:0 !important; min-height:300px !important">

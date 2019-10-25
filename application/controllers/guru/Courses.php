@@ -18,13 +18,16 @@ class Courses extends Users_Controller
             'm_courses',
             'm_group',
             'm_teacher',
+            'm_edu_ladder',
+            'm_teacher_profile',
         ));
         $this->user_id = $this->session->userdata('user_id');
     }
 
     public function index()
     {
-        $teacher = $this->m_teacher->get_edu_ladder_teacher($this->user_id)->row();
+        $param['user_id'] = $this->user_id;
+        $teacher = $this->m_teacher_profile->get_profile($param)->row();
         $table = $this->services->course_table_config($this->current_page);
         $table['rows'] = $this->m_courses->get_teacher_course(['user_id' => $this->user_id])->result();
         $this->data["contents"] = $this->load->view('templates/tables/plain_table_12', $table, true);
@@ -88,7 +91,7 @@ class Courses extends Users_Controller
     {
         if (!($_POST)) redirect(site_url($this->current_page));
 
-        $data_param['id']     = $this->input->post('id');
+        $data_param['id']     = $this->input->post('teacher_course_id');
         if ($this->m_courses->delete_teacher_course($data_param)) {
             $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_courses->messages()));
         } else {

@@ -13,6 +13,7 @@ class Courses extends Admin_Controller
 		$this->load->library('services/Courses_services');
 		$this->services = new Courses_services;
 		$this->load->model(array(
+			'm_edu_ladder',
 			'm_courses',
 			'm_teacher',
 		));
@@ -33,7 +34,7 @@ class Courses extends Admin_Controller
 				"edu_ladder_id" => array(
 					'type' => 'select',
 					'label' => "Jenjang Pendidikan",
-					'options' => $this->m_teacher->list_edu_ladder()
+					'options' => $this->m_edu_ladder->list_edu_ladder()
 				),
 				"name" => array(
 					'type' => 'text',

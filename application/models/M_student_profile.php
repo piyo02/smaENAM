@@ -8,7 +8,7 @@ class M_student_profile extends MY_Model
   function __construct()
   {
     parent::__construct($this->table);
-    parent::set_join_key('class_id');
+    // parent::set_join_key('class_id');
   }
 
   /**
@@ -109,6 +109,33 @@ class M_student_profile extends MY_Model
       'join'
     );
     $this->db->where($param);
+    return $this->db->get($this->table);
+  }
+
+  public function get_student_by_class($data_param)
+  {
+    $this->db->select('table_users.id');
+    $this->db->select('CONCAT(table_users.first_name, " ", table_users.last_name) AS username');
+    $this->db->select('student_profile.school_id');
+    $this->db->select('schools.name AS school_name');
+    $this->db->select('student_profile.class_id');
+    $this->db->select('classes.name AS class_name');
+    $this->db->join(
+      'classes',
+      'classes.id = student_profile.class_id',
+      'join'
+    );
+    $this->db->join(
+      'schools',
+      'schools.id = student_profile.school_id',
+      'join'
+    );
+    $this->db->join(
+      'table_users',
+      'table_users.id = student_profile.user_id',
+      'join'
+    );
+    $this->db->where($data_param);
     return $this->db->get($this->table);
   }
 }

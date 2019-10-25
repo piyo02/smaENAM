@@ -83,6 +83,9 @@
     })
     $('[data-mask]').inputmask()
 </script>
+<script>
+    CKEDITOR.replace('editor');
+</script>
 </body>
 
 </html>

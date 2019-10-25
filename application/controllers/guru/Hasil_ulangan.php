@@ -22,6 +22,7 @@ class Hasil_ulangan extends Users_Controller
             'm_jawaban',
             'm_jawaban_siswa',
             'm_hasil_ulangan',
+            'm_class',
         ));
     }
 
@@ -29,7 +30,7 @@ class Hasil_ulangan extends Users_Controller
     {
         #################################################################3
         $data = '';
-        $data_param['creator_id'] = $this->session->userdata('user_id');
+        $data_param['user_id'] = $this->session->userdata('user_id');
         $table = $this->services->groups_table_config($this->current_page, $data);
         $table["rows"] = $this->m_ulangan->get_ulangan($data_param)->result();
         $table = $this->load->view('templates/tables/plain_table_12', $table, true);
@@ -103,7 +104,7 @@ class Hasil_ulangan extends Users_Controller
 
     public function export_excel($id)
     {
-        $course = $this->m_ulangan->get_course($id)->row();
+        $course = $this->m_class->get_course($id)->row();
         $detail = $this->m_ulangan->get_task_by_id($id)->row();
         $materi = $this->m_bank_soal->list_materi($id);
 
@@ -126,6 +127,8 @@ class Hasil_ulangan extends Users_Controller
     {
         $data_param['id'] = $id;
         $detail = $this->m_hasil_ulangan->get_detail_ulangan($data_param)->row();
+        var_dump($detail);
+        die;
         $data_param = [
             'ulangan_id' => $detail->ulangan_id,
             'user_id' => $detail->user_id,
@@ -226,7 +229,7 @@ class Hasil_ulangan extends Users_Controller
             $param = [
                 'soal_id' => $answer->soal_id,
             ];
-            $nilai_soal = $this->m_soal->get_skor_by_id($param)->row();
+            $nilai_soal = $this->m_jawaban->get_skor_by_id($param)->row();
             $nilai += $nilai_soal->skor;
         }
         $skor = $this->m_jawaban_siswa->get_skor($data_param)->row();

@@ -15,6 +15,7 @@ class Siswa extends Users_Controller
 		$this->load->model(array(
 			'm_group',
 			'm_ulangan',
+			'm_student_profile',
 		));
 	}
 
@@ -41,10 +42,41 @@ class Siswa extends Users_Controller
 
 	public function detail($class_id)
 	{
-		$param['creator_id'] = $this->session->userdata('user_id');
+		$param = [
+			'class_id' => $class_id,
+			'creator_id' => $this->session->userdata('user_id')
+		];
+
 		#################################################################3
-		$table = $this->services->groups_table_config($this->current_page);
-		$table["rows"] = $this->m_ulangan->get_class_teacher($param)->result();
+		$table = $this->services->course_table_config($this->current_page, 1, $class_id);
+		$table["rows"] = $this->m_ulangan->get_course_from_ulangan($param)->result();
+		$table = $this->load->view('templates/tables/plain_table_12', $table, true);
+		$this->data["contents"] = $table;
+
+		// return;
+		#################################################################3
+		$alert = $this->session->flashdata('alert');
+		$this->data["key"] = $this->input->get('key', FALSE);
+		$this->data["alert"] = (isset($alert)) ? $alert : NULL;
+		$this->data["current_page"] = $this->current_page;
+		$this->data["block_header"] = "Siswa";
+		$this->data["header"] = "Daftar Hasil Siswa";
+		$this->data["sub_header"] = 'Klik Tombol Action Untuk Aksi Lebih Lanjut';
+		$this->render("templates/contents/plain_content");
+	}
+
+	public function list($course_id)
+	{
+		$class_id = $this->input->get('class_id');
+		$param = [
+			'school_id' => $this->session->userdata('school_id'),
+			'class_id' => $class_id,
+			// 'creator_id' => $this->session->userdata('user_id')
+		];
+
+		#################################################################3
+		$table = $this->services->lists_table_config($this->current_page, 1, $class_id, $course_id);
+		$table["rows"] = $this->m_student_profile->get_student_by_class($param)->result();
 		$table = $this->load->view('templates/tables/plain_table_12', $table, true);
 		$this->data["contents"] = $table;
 
@@ -119,5 +151,13 @@ class Siswa extends Users_Controller
 			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_group->errors()));
 		}
 		redirect(site_url($this->current_page));
+	}
+
+	public function report($user_id)
+	{
+		$data_param = [
+			'user_id' => $user_id,
+			'course_id' => $this->input->get('course_id'),
+		];
 	}
 }

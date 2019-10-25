@@ -146,7 +146,7 @@ class Soal extends Users_Controller
 			$id = $this->m_soal->insert_soal($data_soal);
 
 			$data_option = $this->$method_option($id);
-			$this->m_soal->insert_option($data_option);
+			$this->m_jawaban->create($data_option);
 
 			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_soal->messages()));
 			redirect(site_url($this->current_page . 'daftar_soal/' . $bank_soal_id));
@@ -312,9 +312,9 @@ class Soal extends Users_Controller
 	public function delete()
 	{
 		if (!($_POST)) redirect(site_url($this->current_page . '/daftar_soal'));
-		$soal_id = $this->input->post('id');
+		$data_param['id'] = $this->input->post('id');
 		$bank_soal_id = $this->input->post('bank_soal_id');
-		if ($this->m_soal->delete($soal_id)) {
+		if ($this->m_soal->delete($data_param)) {
 			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::SUCCESS, $this->m_soal->messages()));
 		} else {
 			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_soal->errors()));
@@ -559,5 +559,14 @@ class Soal extends Users_Controller
 			$kode = 'S-' . $id;
 		}
 		return $kode;
+	}
+
+	public function count_type()
+	{
+		$id = $this->input->post('id');
+		$data['pg'] = $this->m_soal->get_num_type($id, 'teks', 'gambar')->num_rows();
+		$data['isian'] = $this->m_soal->get_num_type($id, 'isian')->num_rows();
+		$data['esai'] = $this->m_soal->get_num_type($id, 'esai')->num_rows();
+		echo json_encode($data);
 	}
 }

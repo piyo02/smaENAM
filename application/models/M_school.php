@@ -111,6 +111,7 @@ class M_school extends MY_Model
   }
 
 
+  //pindah?
   public function teacher_by_school_id($data_param)
   {
     $this->db->select('table_users.id');

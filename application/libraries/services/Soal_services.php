@@ -170,7 +170,7 @@ class Soal_services
 			$_data['data'] = $data;
 		$_data["form_data"] = array(
 			"text" => array(
-				'type' => 'textarea',
+				'type' => 'ckeditor',
 				'label' => "Soal teks",
 			),
 		);
@@ -182,12 +182,12 @@ class Soal_services
 	public function get_form_soal_gambar()
 	{
 		$_data["form_data"] = array(
-			"userfiles" => array(
+			"gambar" => array(
 				'type' => 'file',
 				'label' => "Soal gambar",
 			),
 			"text" => array(
-				'type' => 'textarea',
+				'type' => 'ckeditor',
 				'label' => "Soal teks",
 			),
 		);
@@ -202,7 +202,7 @@ class Soal_services
 				'label' => "Soal audio (*.mp3)",
 			),
 			"text" => array(
-				'type' => 'textarea',
+				'type' => 'ckeditor',
 				'label' => "Soal teks",
 			),
 		);
@@ -357,7 +357,7 @@ class Soal_services
 				'label' => "Bank Soal Id",
 			),
 			"text" => array(
-				'type' => 'textarea',
+				'type' => 'ckeditor',
 				'label' => "Soal teks",
 				'value' => $data->text
 			),
@@ -382,7 +382,7 @@ class Soal_services
 				'label' => "Soal gambar",
 			),
 			"text" => array(
-				'type' => 'textarea',
+				'type' => 'ckeditor',
 				'label' => "Soal teks",
 				'value' => $data->text
 			),
@@ -403,7 +403,7 @@ class Soal_services
 				'label' => "Bank Soal Id",
 			),
 			"text" => array(
-				'type' => 'textarea',
+				'type' => 'ckeditor',
 				'label' => "Soal teks",
 				'value' => $data->text
 			),
@@ -433,7 +433,7 @@ class Soal_services
 				'value' => $data->text
 			),
 			"text" => array(
-				'type' => 'textarea',
+				'type' => 'ckeditor',
 				'label' => "Soal teks",
 				'value' => $data->text
 			),

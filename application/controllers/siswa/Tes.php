@@ -46,9 +46,9 @@ class Tes extends Siswa_Controller
 		foreach ($refs as $key => $ref) {
 			$_data_param['bank_soal_id'] = $ref->bank_soal_id;
 			$qty = $this->m_referensi->get_sum_soal($data_param, $_data_param)->row();
-			$lists_pg = array_merge($lists_pg, $this->m_referensi->get_soal_id_pg($_data_param, $qty->pg)->result());
-			$lists_isian =  array_merge($lists_isian, $this->m_referensi->get_soal_id_isian($_data_param, $qty->isian)->result());
-			$lists_esai = array_merge($lists_esai, $this->m_referensi->get_soal_id_esai($_data_param, $qty->esai)->result());
+			$lists_pg = array_merge($lists_pg, $this->m_jawaban->get_soal_id_pg($_data_param, $qty->pg)->result());
+			$lists_isian =  array_merge($lists_isian, $this->m_jawaban->get_soal_id_isian($_data_param, $qty->isian)->result());
+			$lists_esai = array_merge($lists_esai, $this->m_jawaban->get_soal_id_esai($_data_param, $qty->esai)->result());
 		}
 
 		//merge list
@@ -62,6 +62,11 @@ class Tes extends Siswa_Controller
 			$data['user_id'] = $this->session->userdata('user_id');
 			$insert_data[] = $data;
 		}
+		if (!isset($insert_data)) {
+			$this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, 'Soal tidak ada, silahkan hubungi guru yang bersangkutan!'));
+			redirect('siswa/home');
+		}
+
 		$this->m_jawaban_siswa->insert_batch_soal($insert_data);
 
 		redirect('siswa/tes/ulangan');

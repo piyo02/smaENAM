@@ -20,8 +20,11 @@ class Bank_soal extends Users_Controller
             'm_courses',
             'm_ulangan',
             'm_teacher',
+            'm_teacher_profile',
+            'm_soal',
         ));
-        $this->teacher = $this->m_teacher->get_edu_ladder_teacher($this->session->userdata('user_id'))->row();
+        $param['user_id'] = $this->session->userdata('user_id');
+        $this->teacher = $this->m_teacher_profile->get_profile($param)->row();
     }
     public function index()
     {
@@ -158,14 +161,5 @@ class Bank_soal extends Users_Controller
             $this->session->set_flashdata('alert', $this->alert->set_alert(Alert::DANGER, $this->m_bank_soal->errors()));
         }
         redirect(site_url($this->current_page));
-    }
-
-    public function count_type()
-    {
-        $id = $this->input->post('id');
-        $data['pg'] = $this->m_ulangan->get_num_type($id, 'teks', 'gambar')->num_rows();
-        $data['isian'] = $this->m_ulangan->get_num_type($id, 'isian')->num_rows();
-        $data['esai'] = $this->m_ulangan->get_num_type($id, 'esai')->num_rows();
-        echo json_encode($data);
     }
 }

@@ -21,12 +21,28 @@ class Courses_services
     );
     $table["number"] = $start_number;
     $table["action"] = array(
+      // array(
+      //   "name" => "Detail",
+      //   "type" => "link",
+      //   "url" => site_url($_page . "group/"),
+      //   "button_color" => "primary",
+      //   "param" => "id",
+      // ),
       array(
-        "name" => "Detail",
-        "type" => "link",
-        "url" => site_url($_page . "group/"),
-        "button_color" => "primary",
+        "name" => 'X',
+        "type" => "modal_delete",
+        "modal_id" => "delete_course_",
+        "url" => site_url($_page . "delete/"),
+        "button_color" => "danger",
         "param" => "id",
+        "form_data" => array(
+          "id" => array(
+            'type' => 'hidden',
+            'label' => "id",
+          ),
+        ),
+        "title" => "User",
+        "data_name" => "name",
       ),
     );
     return $table;
@@ -46,9 +62,9 @@ class Courses_services
         "modal_id" => "delete_category_",
         "url" => site_url($_page . "delete/"),
         "button_color" => "danger",
-        "param" => "id",
+        "param" => "teacher_course_id",
         "form_data" => array(
-          "id" => array(
+          "teacher_course_id" => array(
             'type' => 'hidden',
             'label' => "id",
           ),

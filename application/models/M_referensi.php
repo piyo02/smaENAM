@@ -11,6 +11,37 @@ class M_referensi extends MY_Model
     parent::set_join_key('group_id');
   }
 
+  public function create($data)
+  {
+    $this->db->insert_batch($this->table, $data);
+  }
+
+  public function delete($data_param)
+  {
+    //foreign
+    //delete_foreign( $data_param. $models[]  )
+    if (!$this->delete_foreign($data_param)) {
+      $this->set_error("gagal"); //('group_delete_unsuccessful');
+      return FALSE;
+    }
+    //foreign
+    $this->db->trans_begin();
+
+    $this->db->delete($this->table, $data_param);
+    if ($this->db->trans_status() === FALSE) {
+      $this->db->trans_rollback();
+
+      $this->set_error("gagal"); //('group_delete_unsuccessful');
+      return FALSE;
+    }
+
+    $this->db->trans_commit();
+
+    $this->set_message("berhasil"); //('group_delete_successful');
+    return TRUE;
+  }
+
+
   public function get_referensi_bank_soal($data_param)
   {
     $this->db->select('bank_soal_id');
@@ -28,45 +59,27 @@ class M_referensi extends MY_Model
     return $this->db->get($this->table);
   }
 
-  public function get_soal_id_pg($data_param, $limit)
+  public function get_bank_soal($id)
   {
-    $this->db->select('DISTINCT(tabel_soal.id)');
-    $this->db->join(
-      'tabel_soal',
-      'tabel_soal.id = tabel_jawaban.soal_id',
-      'join'
-    );
-    $this->db->where($data_param);
-    $this->db->where('(`tabel_jawaban`.`type` = "teks" OR `tabel_jawaban`.`type` = "gambar")');
-    $this->db->order_by('id', 'RANDOM');
-    return $this->db->get('tabel_jawaban', $limit);
+    $this->db->select('bank_soal_id as id');
+    $this->db->where('ulangan_id', $id);
+    return $this->db->get($this->table);
   }
 
-  public function get_soal_id_isian($data_param, $limit)
+  public function get_referensi_soal_by_id($id)
   {
-    $this->db->select('DISTINCT(tabel_soal.id)');
+    $this->db->select('bank_soal.id');
+    $this->db->select('bank_soal.nama');
+    $this->db->select('tabel_referensi_soal.id AS ref_id');
+    $this->db->select('tabel_referensi_soal.pg');
+    $this->db->select('tabel_referensi_soal.isian');
+    $this->db->select('tabel_referensi_soal.esai');
     $this->db->join(
-      'tabel_soal',
-      'tabel_soal.id = tabel_jawaban.soal_id',
+      'bank_soal',
+      'bank_soal.id = tabel_referensi_soal.bank_soal_id',
       'join'
     );
-    $this->db->where($data_param);
-    $this->db->where('tabel_jawaban.type', 'isian');
-    $this->db->order_by('id', 'RANDOM');
-    return $this->db->get('tabel_jawaban', $limit);
-  }
-
-  public function get_soal_id_esai($data_param, $limit)
-  {
-    $this->db->select('DISTINCT(tabel_soal.id)');
-    $this->db->join(
-      'tabel_soal',
-      'tabel_soal.id = tabel_jawaban.soal_id',
-      'join'
-    );
-    $this->db->where($data_param);
-    $this->db->where('tabel_jawaban.type', 'esai');
-    $this->db->order_by('id', 'RANDOM');
-    return $this->db->get('tabel_jawaban', $limit);
+    $this->db->where('tabel_referensi_soal.ulangan_id', $id);
+    return $this->db->get($this->table);
   }
 }

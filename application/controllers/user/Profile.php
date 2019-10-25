@@ -13,6 +13,10 @@ class Profile extends User_Controller
 		parent::__construct();
 		$this->load->helper(array('url', 'language'));
 		$this->lang->load('auth');
+		$this->load->model(array(
+			'm_teacher_profile',
+			'm_edu_ladder',
+		));
 
 		$this->load->library('services/User_services');
 		$this->services = new User_services;
@@ -85,9 +89,10 @@ class Profile extends User_Controller
 				$data['old_password'] = $this->input->post('old_password');
 			}
 			if ($this->ion_auth->is_teacher()) {
+				$param['user_id'] = $user_id;
 				$_data['nip'] = $this->input->post('nip');
 				$_data['edu_ladder_id'] = $this->input->post('edu_ladder_id');
-				$profile = $this->m_teacher->update_profile($_data);
+				$profile = $this->m_teacher_profile->update($_data, $param);
 			}
 			$user = $this->ion_auth->user()->row(); //curr user
 			// check to see if we are updating the user
@@ -131,7 +136,8 @@ class Profile extends User_Controller
 				),
 			);
 			if ($this->ion_auth->is_teacher()) {
-				$profile = $this->m_teacher->get_edu_ladder_teacher($this->session->userdata('user_id'))->row();
+				$data_param['user_id'] = $this->session->userdata('user_id');
+				$profile = $this->m_teacher_profile->get_profile($data_param)->row();
 				if (!$profile) {
 					$profile = (object) array(
 						'nip' => '',
@@ -147,7 +153,7 @@ class Profile extends User_Controller
 					"edu_ladder_id" => array(
 						'type' => 'select',
 						'label' => "Jenjang Pendidikan",
-						'options' => $this->m_teacher->list_edu_ladder(),
+						'options' => $this->m_edu_ladder->list_edu_ladder(),
 						'selected' => $profile->edu_ladder_id
 					),
 				);
